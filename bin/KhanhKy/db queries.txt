@@ -1,0 +1,15 @@
+
+///// CREATE THE TABLE
+CREATE TABLE IF NOT EXISTS food ( id smallint unsigned UNIQUE NOT NULL auto_increment, 
+name varchar(25) NOT NULL, 
+viet_name varchar(25) ,  
+category varchar (10) NOT NULL,
+viet_category varchar (10) ,
+price decimal (4,1) NOT NULL,
+ingr_name varchar (20) ,
+ingr_amount decimal (6,1) ,
+primary key (id) );
+
+
+///// INSERT DATA
+INSERT INTO food ( id, name , category, price) VALUES ( null, 'Heo Quay', 'Heo' , 40);
