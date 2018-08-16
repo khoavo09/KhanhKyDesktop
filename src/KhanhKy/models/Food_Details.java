@@ -8,11 +8,22 @@ public class Food_Details {
 	private double price;
 	private Ingredient ingredient;	// Add constructor for this later
 	
-	public Food_Details(String category, String name) {
+	public Food_Details(String category, String name, double price) {
 		super();
 		this.category = category;
 		this.name = name;
+		this.price = price;
 	}
+	
+	public Food_Details(String name, String vietnameseName, String category, String vietnameseCategory, double price) {
+		super();
+		this.category = category;
+		this.vietnameseCategory = vietnameseCategory;
+		this.vietnameseName = vietnameseName;
+		this.name = name;
+		this.price = price;
+	}
+
 	public String getCategory() {
 		return category;
 	}

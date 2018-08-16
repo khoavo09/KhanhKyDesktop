@@ -13,3 +13,11 @@ primary key (id) );
 
 ///// INSERT DATA
 INSERT INTO food ( id, name , category, price) VALUES ( null, 'Heo Quay', 'Heo' , 40);
+
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Luc Lac' , 'Bò Lúc Lắc', 'Bo' , 'Bò' , 30);
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Nuong' , 'Bò Nướng', 'Bo' , 'Bò' , 40);
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Xao' , 'Bò Xào', 'Bo' , 'Bò' , 50);
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Quay' , 'Heo Quay', 'Heo' , 'Heo' , 20);
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Nuong' , 'Heo Nướng', 'Heo' , 'Heo' , 50);
+INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Ruong Nuong' , 'Heo Rường Nướng', 'Heo Ruong' , 'Heo Rường' , 50);
+

@@ -13,6 +13,7 @@ import KhanhKy.models.Food_Details;
 import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 
@@ -33,8 +34,7 @@ public class Cashier extends JFrame implements ActionListener{
 	private JButton porkFoodButtons[] = new JButton[porkFood.length];
 	private JButton chickenFoodButtons[] = new JButton[chickenFood.length];
 	
-	List<Food_Details>  allFood;
-
+	List<Food_Details>  allFood = new ArrayList<Food_Details>();
 
 
 
@@ -76,53 +76,39 @@ public class Cashier extends JFrame implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e){
 	    String a = e.getActionCommand();
-	    
+		List<Food_Details>  tempFood = new ArrayList<Food_Details>();
+
 	    if(a.equals("BoBtn")){
-			btnDetailsPanel.removeAll();
-			for(int i=0; i < 5; i++) {
-				JButton btn = new JButton();
-				btn.setText(allFood.get(i).getName());
-				btn.setActionCommand( allFood.get(i).getName());
-				btn.addActionListener(this);
-				btnDetailsPanel.add(btn);
+			addButtons("Bo");	        
 			}
-			btnDetailsPanel.repaint();
-			btnDetailsPanel.revalidate();	        }
 	    if(a.equals("HeoBtn")){
-			btnDetailsPanel.removeAll();
-			for(int i=5; i < 10; i++) {
-				JButton btn = new JButton();
-				btn.setText(allFood.get(i).getName());
-				btn.setActionCommand(allFood.get(i).getName());
-				btn.addActionListener(this);
-				btnDetailsPanel.add(btn);
-			}
-			btnDetailsPanel.repaint();
-			btnDetailsPanel.revalidate();
-	        }
+			addButtons("Heo");	
+	    }
+
 	    if(a.equals("Heo RungBtn")){
-			btnDetailsPanel.removeAll();
-			for(int i=10; i < 15; i++) {
-				JButton btn = new JButton();
-				//beefFoodButtons[i] = btn;
-				btn.setText(allFood.get(i).getName());
-				btn.setActionCommand(allFood.get(i).getName());
-				btn.addActionListener(this);
-				btnDetailsPanel.add(btn);
-			}
-			btnDetailsPanel.repaint();
-			btnDetailsPanel.revalidate();
-	        }
+			addButtons("Heo Ruong");	   
+	    }
 	    
-	    //
+	    
 	    
 	    if(a.equals("Heo Luc Lac")) {
 	    	System.out.println("HEOOOO");
 	    }
 	}
+
 	
-	
-	private void addButtons() {
-		
+	private void addButtons(String target) {
+		btnDetailsPanel.removeAll();
+		for(int i =0; i < allFood.size();i++) {
+			if(allFood.get(i).getCategory().equals(target)) {
+				JButton btn = new JButton();
+				btn.setText(allFood.get(i).getVietnameseName());
+				btn.setActionCommand( allFood.get(i).getName());
+				btn.addActionListener(this);
+				btnDetailsPanel.add(btn);
+			}
+		}
+		btnDetailsPanel.repaint();
+		btnDetailsPanel.revalidate();
 	}
 }

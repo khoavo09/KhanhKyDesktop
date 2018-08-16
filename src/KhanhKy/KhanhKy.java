@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 public class KhanhKy {
 
 	private JFrame frame;
+	List<Food_Details> allFood= new ArrayList<Food_Details>();
 
 	/**
 	 * Launch the application.
@@ -24,8 +25,6 @@ public class KhanhKy {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				DBConnect connect = new DBConnect();
-				connect.getData();
 				try {
 					KhanhKy window = new KhanhKy();
 					window.frame.setVisible(true);
@@ -52,7 +51,9 @@ public class KhanhKy {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-
+		DBConnect connect = new DBConnect();
+		allFood = connect.getData();
+		
 		
 		String foodCategoriesViet[] = {"Bò", "Heo", "Heo Rừng", "Gà" , "Mực", "Tôm", "Cá", "Lươn", "Ếch", "Dôm", "Bồ Câu", "Chim sẽ"};
 		String foodCategories[]= {"Bo", "Heo", "Heo Rung", "Ga", "Muc", "Tom", "Ca", "Luon", "Ech", "Dom", "Bo Cau", "Chim se"};
@@ -62,18 +63,17 @@ public class KhanhKy {
 		String porkFood[]= {"Heo Nuong", "Heo Quay"};
 		String chickenFood[] = {"Ga Nuong", "Ga Kho"};
 		
-		List<Food_Details> allFood= new ArrayList<Food_Details>();
 
 		
-		for(int i =0; i< foodCategories.length;i++) {
-			for(int j=0; j<5;j++) {
-				Food_Details foodDetails = new Food_Details(foodCategories[i],(foodCategories[i]+ " " +temp[j]));
-				allFood.add(foodDetails);
-				//System.out.println(foodDetails.getName());
-			}
-			//System.out.println(allFood.get(i).getName());
-			//System.out.println(allFood.get(i).getCategory());
-		}
+//		for(int i =0; i< foodCategories.length;i++) {
+//			for(int j=0; j<5;j++) {
+//				Food_Details foodDetails = new Food_Details(foodCategories[i],(foodCategories[i]+ " " +temp[j]));
+//				allFood.add(foodDetails);
+//				//System.out.println(foodDetails.getName());
+//			}
+//			//System.out.println(allFood.get(i).getName());
+//			//System.out.println(allFood.get(i).getCategory());
+//		}
 		
 		JButton cashierButton = new JButton("Tinh Tien");
 		cashierButton.addActionListener(new ActionListener() {
