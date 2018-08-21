@@ -41,7 +41,7 @@ public class DBConnect {
 				double price = results.getDouble("price");
 				Food_Details foodDetail = new Food_Details(name, viet_name, category, viet_category, price);
 				allFood.add(foodDetail);
-				System.out.println(foodDetail.getVietnameseName());
+				//System.out.println(foodDetail.getVietnameseName());
 
 			}			
 		}

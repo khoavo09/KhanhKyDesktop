@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import KhanhKy.models.Food_Details;
 
 import java.awt.BorderLayout;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -47,21 +49,16 @@ public class KhanhKy {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 700, 500);
+		frame.setBounds(100, 100, 777, 649);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+	    ImagePanel panel = new ImagePanel(new ImageIcon("assets/background.png").getImage());
+
 		
 		DBConnect connect = new DBConnect();
 		allFood = connect.getData();
 		
-		
-		String foodCategoriesViet[] = {"Bò", "Heo", "Heo Rừng", "Gà" , "Mực", "Tôm", "Cá", "Lươn", "Ếch", "Dôm", "Bồ Câu", "Chim sẽ"};
-		String foodCategories[]= {"Bo", "Heo", "Heo Rung", "Ga", "Muc", "Tom", "Ca", "Luon", "Ech", "Dom", "Bo Cau", "Chim se"};
-		String beefFood[] = {"Bo Luc Lac", "Bo Xao", "Heo Nuong", "Heo Quay", "Ga Nuong", "Ga Kho"};
-		String temp[] = {"Luc Lac", "Xao", "Nuong", "Quay", "Kho"};
 
-		String porkFood[]= {"Heo Nuong", "Heo Quay"};
-		String chickenFood[] = {"Ga Nuong", "Ga Kho"};
 		
 
 		
@@ -86,15 +83,17 @@ public class KhanhKy {
 		
 		
 		
-		cashierButton.setBounds(157, 67, 117, 29);
+		cashierButton.setBounds(49, 274, 144, 138);
 		frame.getContentPane().add(cashierButton);
 		
 		JButton storageButton = new JButton("Chinh Kho");
-		storageButton.setBounds(157, 112, 117, 29);
+		storageButton.setBounds(311, 274, 157, 138);
 		frame.getContentPane().add(storageButton);
 		
 		JButton editButton = new JButton("Chinh Gia");
-		editButton.setBounds(157, 160, 117, 29);
+		editButton.setBounds(538, 274, 152, 138);
 		frame.getContentPane().add(editButton);
+	    frame.getContentPane().add(panel);
+
 	}
 }

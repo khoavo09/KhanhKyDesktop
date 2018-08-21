@@ -6,6 +6,8 @@ public class Food_Details {
 	private String vietnameseName;
 	private String name;
 	private double price;
+	private int amount;
+    double subTotal;
 	private Ingredient ingredient;	// Add constructor for this later
 	
 	public Food_Details(String category, String name, double price) {
@@ -54,10 +56,35 @@ public class Food_Details {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+	
+	public void increaseAmount(int num) {
+		this.amount += num;
+	}
+
 	public Ingredient getIngredient() {
 		return ingredient;
 	}
 	public void setIngredient(Ingredient ingredient) {
 		this.ingredient = ingredient;
 	}
+	
+    public double getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(double subTotal) {
+		this.subTotal = subTotal;
+	}
+
+	public void calculateSubTotal(){
+        this.subTotal = this.amount * this.price;
+    }
+
 }
