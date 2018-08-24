@@ -56,7 +56,7 @@ public class KhanhKy {
 
 		
 		DBConnect connect = new DBConnect();
-		allFood = connect.getData();
+		allFood = connect.getMenuData();
 		
 
 		
@@ -75,8 +75,10 @@ public class KhanhKy {
 		JButton cashierButton = new JButton("Tinh Tien");
 		cashierButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Cashier cashier = new Cashier(allFood);
-				cashier.setVisible(true);
+				//Cashier cashier = new Cashier(allFood);
+				//cashier.setVisible(true);
+				SelectTable selectTable = new SelectTable();
+				selectTable.setVisible(true);
 				frame.setVisible(false);
 			}
 		});

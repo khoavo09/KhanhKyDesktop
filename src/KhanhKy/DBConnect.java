@@ -27,7 +27,7 @@ public class DBConnect {
 	}
 	
 	// Retrieve data
-	public List<Food_Details> getData() {
+	public List<Food_Details> getMenuData() {
 		List<Food_Details> allFood= new ArrayList<Food_Details>();
 
 		try {
@@ -49,7 +49,6 @@ public class DBConnect {
 			System.out.println(err);
 		}
 		return allFood;
-		
 	}
 
 }
