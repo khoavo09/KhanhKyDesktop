@@ -54,7 +54,7 @@ public class Cashier extends JFrame implements ActionListener{
 	/**
 	 * Create the frame.
 	 */
-	public Cashier(List<Food_Details>  allFood) {
+	public Cashier(String areaName, int tableNum) {
 		Font f = null;
 		try {
 			f = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(new File("monaco.ttf"))).deriveFont(Font.PLAIN,14);
@@ -62,10 +62,10 @@ public class Cashier extends JFrame implements ActionListener{
 		catch (Exception ex){
 			ex.printStackTrace();
 		}
-
+		DBConnect connect = new DBConnect();
+		allFood = connect.getMenuData();
 		
 		JButton categoryButtons[] = new JButton[foodCategories.length];
-		this.allFood = allFood;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1200, 800);

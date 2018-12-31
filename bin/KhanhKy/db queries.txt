@@ -1,55 +1,90 @@
 
-///// CREATE THE FOOD TABLE
-CREATE TABLE IF NOT EXISTS food ( id smallint unsigned UNIQUE NOT NULL auto_increment, 
-name varchar(25) NOT NULL, 
-viet_name varchar(25) ,  
-category varchar (10) NOT NULL,
-viet_category varchar (10) ,
+DROP DATABASE IF EXISTS khanhkydatabase;
+CREATE DATABASE khanhkydatabase;
+USE khanhkydatabase;
+
+DROP TABLE IF EXISTS all_tables;
+CREATE TABLE all_tables (
+id smallint unsigned primary key NOT NULL auto_increment,
+area varchar(16) NOT NULL, 
+number tinyint NOT NULL, 
+status TINYINT(1) NOT NULL
+)ENGINE=MYISAM;
+
+ALTER TABLE all_tables AUTO_INCREMENT = 1;
+
+CREATE TABLE food ( 
+id smallint unsigned UNIQUE NOT NULL auto_increment, 
+name varchar(40) NOT NULL, 
+viet_name varchar(40) ,  
+category varchar (20) NOT NULL,
+viet_category varchar (20) ,
 price decimal (4,1) NOT NULL,
-ingr_name varchar (20) ,
-ingr_amount decimal (6,1) ,
-primary key (id) );
+ingr_id smallint,
+primary key (id)
+)ENGINE=MYISAM;
 
-//// CREATE THE ORDER TABLE
-CREATE TABLE IF NOT EXISTS order (
-name varchar(9) NOT NULL unique, 
-order_id int(6) unique NOT NULL,
+ALTER TABLE food AUTO_INCREMENT = 1;
+
+
+
+CREATE TABLE IF NOT EXISTS ingredient (
+id smallint unsigned primary key NOT NULL auto_increment,
+name varchar(25) NOT NULL,
+amount smallint unsigned NOT NULL,
+food_id smallint unsigned,
+foreign key (food_id) REFERENCES food(id) 
+ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=MYISAM;
+
+ALTER TABLE ingredient AUTO_INCREMENT = 1;
+
+
+
+CREATE TABLE sale (
+id int unique NOT NULL,
+food_id smallint, 
+order_id smallint,
+status tinyint(1) NOT NULL, 
+primary key (id),
+foreign key (food_id) REFERENCES food(id)
+ON UPDATE CASCADE ON DELETE CASCADE,
+foreign key (order_id) REFERENCES all_orders(id)
+ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=MYISAM;
+ALTER TABLE sale AUTO_INCREMENT = 1;
+
+
+DROP TABLE IF EXISTS all_orders;
+CREATE TABLE all_orders (
+id mediumint unsigned auto_increment primary key,
+table_id smallint NOT NULL,
+sale_id int NOT NULL,
 status TINYINT(1) NOT NULL,
-primary key (name) ),
-
-
-//// CREATE THE ALL_TABLE TABLE
-CREATE TABLE IF NOT EXISTS all_tables (
-name varchar(16) NOT NULL unique, 
-order_id int(6),
-status TINYINT(1) NOT NULL,
-primary key (order_id) ),
-foreign key (order_id) REFERENCES order(order_id);
-
-//// CREATE THE ITEM TABLE
-CREATE TABLE IF NOT EXISTS item (
-name varchar(16) NOT NULL unique, 
-order_id int(6) unique NOT NULL,
-primary key (name) ),
-foreign key (order_id) REFERENCES order(order_id);
+foreign key (table_id) REFERENCES all_tables(id) 
+ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=MYISAM;
+ALTER TABLE all_orders AUTO_INCREMENT = 1;
 
 
 
 
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 3, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Mít", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Mít", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 2, 0);
 
-//INSERT DATA INTO ALL_TABLE
-INSERT INTO all_tables ( name, order_id , status) VALUES ( "Xoài", null, 0);
 
 
-///// INSERT DATA INTO FOOD TABLE
-INSERT INTO food ( id, name , category, price) VALUES ( null, 'Heo Quay', 'Heo' , 40);
-
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Luc Lac' , 'Bò Lúc Lắc', 'Bo' , 'Bò' , 30);
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Nuong' , 'Bò Nướng', 'Bo' , 'Bò' , 40);
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Bo Xao' , 'Bò Xào', 'Bo' , 'Bò' , 50);
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Quay' , 'Heo Quay', 'Heo' , 'Heo' , 20);
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Nuong' , 'Heo Nướng', 'Heo' , 'Heo' , 50);
-INSERT INTO food ( id, name , viet_name, category, viet_category, price) VALUES ( null, 'Heo Ruong Nuong' , 'Heo Rường Nướng', 'Heo Ruong' , 'Heo Rường' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Luc Lac' , 'Bò Lúc Lắc', 'Bo' , 'Bò' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Nuong' , 'Bò Nướng', 'Bo' , 'Bò' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Xao' , 'Bò Xào', 'Bo' , 'Bò' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Quay' , 'Heo Quay', 'Heo' , 'Heo' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Nuong' , 'Heo Nướng', 'Heo' , 'Heo' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Ruong Nuong' , 'Heo Rường Nướng', 'Heo Ruong' , 'Heo Rường' , 50);
 
 
 

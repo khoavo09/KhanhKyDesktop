@@ -18,24 +18,31 @@ import javax.swing.border.EmptyBorder;
 
 import KhanhKy.models.Food_Details;
 import KhanhKy.models.Order;
+import KhanhKy.models.Table;
 
 public class SelectTable extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
-
+	private JFrame frame;
 	private JPanel areaPanel = new JPanel();
 	private JPanel areaDetailsPanel = new JPanel();
 	private final JPanel orderPanel = new JPanel();
 	
 	
-	String areaCategories[] = {"Sảnh", "Ổi", "Mít", "Ao"};
+	//String areaCategories[] = {"Sảnh", "Ổi", "Mít", "Ao"};
 
+	List<String> areaCategories;
 
 
 	//List<Order>  order = new ArrayList<Order>();
 	Order myOrder = new Order();
 
-	List<Food_Details>  allFood = new ArrayList<Food_Details>();
+	List<Table>  allTables = new ArrayList<Table>();
+
+	private int maxNumOfTables =0;
+	private String selectedCategory="$$%$";
+
+
 	private final JLabel orderDetailsLabel = new JLabel("Order Details");
 	private JTextArea orderDetailsTxt = new JTextArea();
 	private final JButton submitButton = new JButton("Tinh Tien");
@@ -46,8 +53,13 @@ public class SelectTable extends JFrame implements ActionListener{
 	 */
 	public SelectTable() {
 
-		JButton categoryButtons[] = new JButton[areaCategories.length];
-		this.allFood = allFood;
+		
+		DBConnect connect = new DBConnect();
+		allTables = connect.getTableData();
+		areaCategories = connect.getDistinctData("area", "all_tables");
+		
+		JButton categoryButtons[] = new JButton[areaCategories.size()];
+
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1200, 800);
@@ -62,16 +74,15 @@ public class SelectTable extends JFrame implements ActionListener{
 		areaDetailsPanel.setBounds(190, 6, 406, 666);
 
 		
-		for(int i=0; i < categoryButtons.length; i++) {
-			JButton btn = new JButton(areaCategories[i]);
-			btn.setText(areaCategories[i]);
-			btn.setActionCommand(areaCategories[i]+"Btn");
+		for(int i=0; i < areaCategories.size(); i++) {
+			JButton btn = new JButton(areaCategories.get(i));
+			btn.setText(areaCategories.get(i));
+			btn.setActionCommand(areaCategories.get(i)+"Btn");
 			btn.addActionListener(this);
 			areaPanel.add(btn);
 		}
 		
 		
-		//buttonPanel.add(btnNewButton);
 		contentPane.add(areaDetailsPanel);
 		//orderPanel.setBounds(630, 6, 450, 666);
 
@@ -101,54 +112,87 @@ public class SelectTable extends JFrame implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e){
-	    String a = e.getActionCommand();
+	    String clickedButtonStr = e.getActionCommand();
 		List<Food_Details>  tempFood = new ArrayList<Food_Details>();
 
 		// Add the buttons on the left and middle panels
-	    if(a.equals("SảnhBtn")){
-			addButtons("Sảnh");
+		
+		
+		int i =0;
+		
+		//System.out.println("Clicked: "+clickedButtonStr);
+		//System.out.println("Selected: "+selectedCategory +"Btn");
+
+		if(clickedButtonStr.contains(selectedCategory)) {
+	    	int index=0;
+
+	    	boolean found= false;
+	    	
+			do {
+				if(clickedButtonStr.equals(selectedCategory+" "+(index+1)+"Btn")) {        		
+        			System.out.println(clickedButtonStr);
+    		    	orderPanel.repaint();
+    		    	orderPanel.revalidate();
+    				Cashier cashier = new Cashier(selectedCategory, index+1);
+    				cashier.setVisible(true);
+    				dispose();
+					found = true;
+				}
+    			//System.out.println("LOOPING" +areaCategories.get(index)+" "+(index+1)+"Btn");
+
+				index++;
+			}
+			while(index< areaCategories.size() && found == false);
+
 		}
-	    if(a.equals("ỔiBtn")){
-			addButtons("Ổi");	
-	    }
-	    if(a.equals("MítBtn")){
-			addButtons("Mít");	   
-	    }
-	    
-	    if(a.equals("Go Back")) {
+		else {    
+			boolean found = false;
+			do {
+				if(clickedButtonStr.equals(areaCategories.get(i)+"Btn")) {
+					maxNumOfTables = getTheHighest(areaCategories.get(i));
+					addButtons(areaCategories.get(i),maxNumOfTables);
+					selectedCategory = areaCategories.get(i);
+					found = true;
+				}
+				i++;
+			}
+			while(i< areaCategories.size() && found == false);
+			
+		}
+		
+	
+	    // TODO: implement back button
+	    if(clickedButtonStr.equals("Go Back")) {
 	    	
 	    }
 	  
 	    
-    	int index=0;
 
-    	// When the user click on an item on the menu
-    	while(index < 4) {
-    		for(int k=0;k<4;k++) {
-        		if(a.equals(areaCategories[index] +" "+ k + "Btn")){
-        			System.out.println(a);
-    		    	orderPanel.repaint();
-    		    	orderPanel.revalidate();
-        		}
-    		}
-
-	    	index++;
 		 }
-	}
+//	}
 
 	
-	private void addButtons(String target) {
+	private void addButtons(String target, int size) {
 		areaDetailsPanel.removeAll();
-		//List<Food_Details>  foodInCategory = new ArrayList<Food_Details>();
-		for(int i =0; i < 4;i++) {
+		for(int i =1; i <= size;i++) {
 				JButton btn = new JButton();
 				btn.setText(target+ " "+ i);
 				btn.setActionCommand( target+ " "+ i + "Btn");
 				btn.addActionListener(this);
 				areaDetailsPanel.add(btn);
+
 				//foodInCategory.add(allFood.get(i));
 		}
 		areaDetailsPanel.repaint();
 		areaDetailsPanel.revalidate();
+	}
+	
+	private int getTheHighest(String target) {
+		int highest = 0;
+		for (int i=0; i< allTables.size();i++) {
+			if(allTables.get(i).getArea().equals(target) && allTables.get(i).getNumber() > highest )
+				highest = allTables.get(i).getNumber();
+		}
+		return highest;
 	}
 }
