@@ -46,14 +46,13 @@ public class SelectTable extends JFrame implements ActionListener{
 	private final JLabel orderDetailsLabel = new JLabel("Order Details");
 	private JTextArea orderDetailsTxt = new JTextArea();
 	private final JButton submitButton = new JButton("Tinh Tien");
-	
+	JFrame mainpage = null;
 	/**
 	 * Create the frame.
 	 * 
 	 */
 	public SelectTable() {
 
-		
 		DBConnect connect = new DBConnect();
 		allTables = connect.getTableData();
 		areaCategories = connect.getDistinctData("area", "all_tables");
@@ -84,9 +83,6 @@ public class SelectTable extends JFrame implements ActionListener{
 		
 		
 		contentPane.add(areaDetailsPanel);
-		//orderPanel.setBounds(630, 6, 450, 666);
-
-
 		
 		orderPanel.setLayout(null);
 		orderDetailsLabel.setBounds(110, 71, 83, 16);
@@ -163,12 +159,11 @@ public class SelectTable extends JFrame implements ActionListener{
 	
 	    // TODO: implement back button
 	    if(clickedButtonStr.equals("Go Back")) {
-	    	
+	    	MainPage mainpage = new MainPage();
+	    	mainpage.setVisible(true);
+	    	dispose();
 	    }
-	  
-	    
-
-		 }
+	}
 //	}
 
 	
@@ -180,8 +175,6 @@ public class SelectTable extends JFrame implements ActionListener{
 				btn.setActionCommand( target+ " "+ i + "Btn");
 				btn.addActionListener(this);
 				areaDetailsPanel.add(btn);
-
-				//foodInCategory.add(allFood.get(i));
 		}
 		areaDetailsPanel.repaint();
 		areaDetailsPanel.revalidate();

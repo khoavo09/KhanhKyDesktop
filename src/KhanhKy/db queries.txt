@@ -42,7 +42,7 @@ ALTER TABLE ingredient AUTO_INCREMENT = 1;
 
 
 CREATE TABLE sale (
-id int unique NOT NULL,
+id int  NOT NULL AUTO_INCREMENT,
 food_id smallint, 
 order_id smallint,
 status tinyint(1) NOT NULL, 

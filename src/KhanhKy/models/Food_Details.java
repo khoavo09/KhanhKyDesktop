@@ -1,6 +1,7 @@
 package KhanhKy.models;
 
 public class Food_Details {
+	private int id;
 	private String category;
 	private String vietnameseCategory;
 	private String vietnameseName;
@@ -17,13 +18,23 @@ public class Food_Details {
 		this.price = price;
 	}
 	
-	public Food_Details(String name, String vietnameseName, String category, String vietnameseCategory, double price) {
+	public Food_Details(int id,String name, String vietnameseName, String category, String vietnameseCategory, double price) {
 		super();
+		this.id = id;
 		this.category = category;
 		this.vietnameseCategory = vietnameseCategory;
 		this.vietnameseName = vietnameseName;
 		this.name = name;
 		this.price = price;
+	}
+
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCategory() {

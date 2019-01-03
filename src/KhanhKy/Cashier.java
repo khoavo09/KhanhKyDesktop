@@ -9,8 +9,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import com.android.print.sdk.CanvasPrint;
+import com.android.print.sdk.PrinterInstance;
+
 import KhanhKy.models.Food_Details;
 import KhanhKy.models.Order;
+import KhanhKy.models.Sale;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JButton;
@@ -38,15 +42,21 @@ public class Cashier extends JFrame implements ActionListener{
 	private JPanel buttonPanel = new JPanel();
 	private JPanel btnDetailsPanel = new JPanel();
 	private final JPanel orderPanel = new JPanel();
+	
+	DBConnect connect;
 
 
 	//List<Order>  order = new ArrayList<Order>();
 	Order myOrder = new Order();
+	int orderID = 0;
 
 	List<Food_Details>  allFood = new ArrayList<Food_Details>();
 	private final JLabel orderDetailsLabel = new JLabel("Order Details");
 	private JTextArea orderDetailsTxt = new JTextArea();
 	private final JButton submitButton = new JButton("Tinh Tien");
+	
+    private PrinterInstance mPrinter;
+
 
 
 
@@ -62,8 +72,9 @@ public class Cashier extends JFrame implements ActionListener{
 		catch (Exception ex){
 			ex.printStackTrace();
 		}
-		DBConnect connect = new DBConnect();
+		connect = new DBConnect();
 		allFood = connect.getMenuData();
+		orderID = connect.getActiveOrder(areaName, tableNum);
 		
 		JButton categoryButtons[] = new JButton[foodCategories.length];
 		
@@ -140,7 +151,26 @@ public class Cashier extends JFrame implements ActionListener{
 	    }
 	    
 	    if(a.equals("Go Back")) {
-	    	
+	    	SelectTable selectTable = new SelectTable();
+	    	selectTable.setVisible(true);
+            List<Food_Details> localOrder = myOrder.getOrderList();
+            List<Sale> saleList = new ArrayList<Sale>();
+
+            for(int i=0; i < localOrder.size();i++) {
+            	Sale sale = new Sale(localOrder.get(i).getId(),orderID,0);
+            	saleList.add(sale);
+            }
+        	connect.insertSale(saleList);
+
+	    	dispose();
+	    }
+	    
+	    if(a.equals("Tinh Tien")) {
+            mPrinter.init();
+            //CanvasPrint cp = new CanvasPrint();
+            mPrinter.printText("Hello World");
+
+
 	    }
 	  
 	    
