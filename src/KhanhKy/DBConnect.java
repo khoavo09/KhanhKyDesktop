@@ -96,8 +96,9 @@ public class DBConnect {
 	
 	public int getActiveOrder(String area, int number) {
 		try {
-			String query = "SELECT id from all_order where area = " +area +" AND number =" +number+ " AND status = 0";
-			return st.executeQuery(query).getInt("id");
+			String query = "SELECT id from all_tables where area = '" +area +"' AND number ='" +number+ "' AND status = 0";
+			results =  st.executeQuery(query);
+//			return results.getInt("id");
 
 
 		} catch (Exception e) {

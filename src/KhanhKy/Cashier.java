@@ -54,6 +54,7 @@ public class Cashier extends JFrame implements ActionListener{
 	private final JLabel orderDetailsLabel = new JLabel("Order Details");
 	private JTextArea orderDetailsTxt = new JTextArea();
 	private final JButton submitButton = new JButton("Tinh Tien");
+	private String receiptToPrint;
 	
     private PrinterInstance mPrinter;
 
@@ -126,6 +127,8 @@ public class Cashier extends JFrame implements ActionListener{
 		submitButton.setBounds(739, 684, 145, 59);
 		
 		contentPane.add(submitButton);
+		submitButton.setActionCommand("Tinh Tien");
+		submitButton.addActionListener(this);
 		//orderPanel.add(orderDetailsTxt);
 		
 		JButton backButton = new JButton("Quay Lai");
@@ -160,15 +163,21 @@ public class Cashier extends JFrame implements ActionListener{
             	Sale sale = new Sale(localOrder.get(i).getId(),orderID,0);
             	saleList.add(sale);
             }
-        	connect.insertSale(saleList);
+        	//connect.insertSale(saleList);
 
 	    	dispose();
 	    }
 	    
 	    if(a.equals("Tinh Tien")) {
-            mPrinter.init();
             //CanvasPrint cp = new CanvasPrint();
-            mPrinter.printText("Hello World");
+			PrinterService printerService = new PrinterService();
+			System.out.println(printerService.getPrinters());
+    		printerService.printString("Caysn Thermal Printer", receiptToPrint);
+    		 
+    		// cut that paper!
+    		//byte[] cutP = new byte[] { 0x1d, 'V', 1 };
+     
+    		//printerService.printBytes("Caysn Thermal Printer", cutP);
 
 
 	    }
@@ -202,7 +211,7 @@ public class Cashier extends JFrame implements ActionListener{
 
                 orderDetailsTxt.append(String.format("%25s %17.1f\n","Tong Cong:", myOrder.getGrandTotal()));
     			
-    			
+                receiptToPrint = orderDetailsTxt.getText();
 		    	orderPanel.repaint();
 		    	orderPanel.revalidate();
 		    	break;
