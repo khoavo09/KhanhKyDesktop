@@ -59,8 +59,7 @@ DROP TABLE IF EXISTS all_orders;
 CREATE TABLE all_orders (
 id mediumint unsigned auto_increment primary key,
 table_id smallint NOT NULL,
-sale_id int NOT NULL,
-status TINYINT(1) NOT NULL,
+status TINYINT(1) DEFAULT 0,
 foreign key (table_id) REFERENCES all_tables(id) 
 ON UPDATE CASCADE ON DELETE CASCADE
 )ENGINE=MYISAM;
@@ -72,10 +71,66 @@ ALTER TABLE all_orders AUTO_INCREMENT = 1;
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 1, 0);
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 2, 0);
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 3, 0);
-INSERT INTO all_tables ( area ,number, status) VALUES ( "Mít", 1, 0);
-INSERT INTO all_tables ( area ,number, status) VALUES ( "Mít", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 4, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 5, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 6, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 7, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 8, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 9, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 10, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 11, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 12, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 13, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 14, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 3, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 4, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 5, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 6, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 7, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 8, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 9, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 10, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 11, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 12, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 13, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Ổi", 14, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 3, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 4, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 5, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 6, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 7, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chòi", 8, 0);
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 1, 0);
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 3, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 4, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 5, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 6, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 7, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 8, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 9, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 10, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 12, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 13, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Sảnh", 14, 0);
+
+
+
+
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 1, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 2, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 3, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 4, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 5, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 6, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 7, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 8, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 9, 0);
+INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 1, 0);
 
 
 
@@ -86,6 +141,529 @@ INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo
 INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Nuong' , 'Heo Nướng', 'Heo' , 'Heo' , 50);
 INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Ruong Nuong' , 'Heo Rường Nướng', 'Heo Ruong' , 'Heo Rường' , 50);
 
+
+INSERT INTO sale ( food_id ,order_id, status) VALUES ( 1, 3, 0);
+INSERT INTO sale ( food_id ,order_id, status) VALUES ( 3, 3, 0);
+INSERT INTO sale ( food_id ,order_id, status) VALUES ( 1, 3, 0);
+INSERT INTO sale ( food_id ,order_id, status) VALUES ( 3, 2, 0);
+
+INSERT INTO all_orders ( table_id , status) VALUES (1, 0);
+INSERT INTO all_orders ( table_id , status) VALUES (2, 0);
+INSERT INTO all_orders ( table_id , status) VALUES (3, 0);
+
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG ME' , 'BA CHỈ NƯỚNG MẺ', 'BA CHI' , 'BA CHỈ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG XIEN QUE' , 'BA CHỈ NƯỚNG XIÊN QUE', 'BA CHI' , 'BA CHỈ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI XAO CAI CHUA' , 'BA CHỈ XÀO CẢI CHUA', 'BA CHI' , 'BA CHỈ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA' , 'BABA', 'BABA' , 'BABA' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA CON' , 'BABA CON', 'BABA' , 'BABA' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH BAO' , 'BÁNH BAO', 'BANH' , 'BÁNH' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH MI' , 'BÁNH MỈ', 'BANH' , 'BÁNH' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG' , 'BÁNH TRÁNG', 'BANH' , 'BÁNH' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG MAM' , 'BÁNH TRÁNG MẮM', 'BANH' , 'BÁNH' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG NHUNG' , 'BÁNH TRÁNG NHÚNG', 'BANH' , 'BÁNH' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU' , 'BAO TỬ', 'BAO TU' , 'BAO TỬ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU HAM TIEU' , 'BAO TỬ HẦM TIÊU', 'BAO TU' , 'BAO TỬ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU XAO CHUA' , 'BAO TỬ XÀO CHUA', 'BAO TU' , 'BAO TỬ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO HAM TIEU' , 'BẮP BÒ HẦM TIÊU', 'BAP BO' , 'BẮP BÒ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO SATE' , 'BẮP BÒ SATE', 'BAP BO' , 'BẮP BÒ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO' , 'BẮP BÒ', 'BAP BO' , 'BẮP BÒ' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO HANH' , 'BẮP XÀO HÀNH', 'BAP' , 'BẮP' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO THIT BAM' , 'BẮP XÀO THỊT BẰM', 'BAP' , 'BẮP' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO TOM' , 'BẮP XÀO TÔM', 'BAP' , 'BẮP' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU', 'BẦU', 'BAU' , 'BẦU' , 99);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU LUOC', 'BẦU LUỘC', 'BAU' , 'BẦU' , 99);
+
+
+A 7UP
+//BA CHỈ NƯỚNG MẺ
+//BA CHỈ NƯỚNG XIÊN QUE
+//BA CHỈ XÀO CẢI CHUA
+//BABA
+//BABA CON
+//BÁNH BAO
+//BÁNH MỈ
+BÁNH TRÁNG
+BÁNH TRÁNG MẮM
+BÁNH TRÁNG NHÚNG
+BAO TỬ (KG)
+BAO TỬ HẦM TIÊU
+BAO TỬ XÀO CHUA
+BẮP BÒ HẦM TIÊU
+BẮP BÒ SATE
+BẮP BÒ(KG)
+BẮP XÀO HÀNH
+BẮP XÀO THỊT BẰM
+BẮP XÀO TÔM
+BẦU
+BẦU LUỘC
+BIA AMSTEL CHAI
+BIA AMSTELL LON
+BIA BIVINA
+BIA HENIKEN CHAI
+BIA HENIKEN LON
+BIA LARUE
+BIA SÀI GÒN
+BIA TIGER BẠC
+BIA TIGER CHAI
+BIA TIGER LON
+BÒ 1 NẮNG KIẾN VÀNG
+BÒ ÁP CHẢO
+BÒ BITTET KHOAI TÂY CHIÊN
+BỒ CÂU CHIÊN MẮM
+BỒ CÂU HẦM KHOAI MÔN
+BỒ CÂU NẤU CHÁO
+BỒ CÂU NHỒI KHỔ QUA
+BỒ CÂU NƯỚNG MẮM NHỈ
+BỒ CÂU NƯỚNG MUỐI ỚT
+BỒ CÂU QUAY CHẢO
+BỒ CÂU RÔ TI
+BỒ CÂU TIỀM ỚT XANH
+BỒ CÂU TIỀM THUỐC BẮC
+BỒ CÂU(CON)
+BÒ HÚC
+BÒ LÁ LỐT
+BÒ LÚC LẮC KHOAI TÂY CHIÊN
+BÒ NÉ
+BÒ NHÚNG GIẤM
+BÒ NHÚNG MẺ
+BÒ NƯỚNG KIỂU NGA
+BÒ NƯỚNG LÁ LỐP
+BÒ NƯỚNG MÈ
+BO NƯỚNG MUỐI ỚT
+BÒ NƯỚNG NGŨ SẮC
+BÒ NƯỚNG PHO MAI
+BÒ QUANH LỬA HỒNG
+BÒ SỐT ME
+BÒ TÁI CHANH
+BÒ TÁI RAU MUỐNG
+BÒ XÀO CẢI
+BÒ XÀO CHUA NGỌT
+BÒ XÀO KHỔ QUA
+BÒ XÀO SẢ ÓT
+BÔNG CẢI LUỘC
+BÔNG CẢI XÀO BÒ
+BÔNG CẢI XÀO TỎI
+BÚN
+CÁ BÒ DA(KG)
+CÁ BÒ LỘT  DA
+CA BOP
+CÁ BÓP
+CÁ BÓP KHO TỘ
+CÁ CHÉP
+CÁ CHÉP KG
+CÀ CHUA XÀO CẢI THẢO
+CÀ CHUA/DƯA LEO
+CÁ CƠM MỒM TRỘN XOÀI
+CÁ DÃNH NƯỚNG
+CÁ DÃNH TRỘN XOÀI
+CÁ DIÊU HỒNG CHIÊN
+CÁ DIÊU HỒNG CHIÊN XÙ
+CÁ DIÊU HỒNG NƯỚNG MUỐI ỚT
+CÁ DIÊU HỒNG RANG MUỐI
+CÁ DIÊU HỒNG UM BÚN TÀU
+CÁ ĐUỐI NƯỚNG
+CÁ KHOAI CHIÊN
+CÁ KHOAI NƯỚNG
+CÁ LĂN
+CÁ LĂN KG
+CÁ LỐC
+CÁ LÓC CHIÊN XÙ
+CÁ LÓC HẤP
+CÁ LÓC HẤP BẦU
+CÁ LỐC KG
+CÁ LÓC NƯỚNG GIẤY BẠC
+CÁ LÓC NƯỚNG LÁ TÍA TÔ
+CÁ LÓC NƯỚNG MUỐI ỚT
+CÁ LÓC NƯỚNG TRUI
+CÁ LỐC UM BÚN TÀU
+CÁ MAI(KG)
+CÁ MÚ
+CÀ RỐT PHO MAI
+CÁ THÁC  LÁT(KG)
+CÁ THÂC LÁC CHIÊN
+CÁ THÁC LÁT THÊM
+CÁ THU
+CÁ THU ĐAO
+CÀ TÍM NƯỚNG MỠ HÀNH
+CÀ TÍM SỐT THỊT BẰM
+CÁ TRỨNG CHIÊN GIÒN
+CÁ TRỨNG NƯỚNG MUỐI ỚT
+CÁ TRỨNG(KG)
+CẢI MẦM TRỘN BÒ
+CẢI MẦM TRỘN CÁ HỘP
+CẢI MẦM TRỘN DẦU GIẤM
+CẢI THẢO LUỘC
+CẢI XANH LUỘC
+CẢI XANH XÀO BÒ
+CẢI XANH XÀO TỎI
+CẦN CÂU
+CANH CẢI CÁ THÁC LÁT
+CANH CẢI LÒNG GÀ
+CANH CẢI NẤU TÔM
+CANH CẢI THỊT BẰM
+CANH CẢI XANH
+CANH CHUA CÁ BÓP
+CANH CHUA CÁ LÓC
+CANH CHUA CÁ THÁC LÁT
+CÁNH GÀ
+CÁNH GÀ
+CANH KHỔ QUA CÁ THÁC LÁT
+CANH KHỔ QUA THỊT
+CANH KHỔ QUA TÔM
+CANH SƯỜN NON NÁU CẢI CHUA
+CANH XÀ LÁCH XOONG THỊT BẦM
+CANH XA LACH XOONG TOM
+CHÀ BÔNG
+CHÀ BÔNG THÊM
+CHẢ GIÒ CÁ LỐC
+CHẢ GIÒ KHÁNH KỲ
+CHẢ ỐC
+CHẢ ỐC
+CHẢ RAM TÔM ĐẤT
+CHÁO BÒ BẰM
+CHÁO CÁ BÓP
+CHÁO CÁ LÓC
+CHÁO CỒI SÒ
+CHÁO HẢI SẢN
+CHÁO HÀU
+CHÁO LÒNG GÀ
+CHÁO LƯƠN
+CHÁO NẤM
+CHÁO NGAO
+CHÁO THẬP CẨM
+CHÁO THỊT
+CHÁO TÔM
+CHÁO TRẮNG
+CHÁO TRỨNG
+CHIM SẺ CHIÊN
+CHIM SẺ NƯỚNG MẮM NHỈ
+CHIM SẺ NƯỚNG MUỐI ỚT
+CHIM SẺ RÔ TI
+CHIM SẺ(CON)
+CHÌNH
+CHÌNH KG
+COCA
+CỒI MAI CHIÊN MẮM
+CỜI MAI CHIÊN XÙ
+CỒI MAI NƯỚNG
+CỒI MAI(KG)
+CÒI SÒ ĐIỆP LỚN
+CỒI SÒ SA TẾ
+CƠM CHIÊN CÁ MẶN
+CƠM CHIÊN DƯƠNG CHÂU
+CƠM CHIÊN HẢI SẢN
+CƠM CHIÊN HONGKONG
+CƠM CHIÊN ỚT XANH
+CƠM CHIÊN TỎI
+CƠM CHIÊN TRỨNG
+CƠM GÀ
+CƠM TRẮNG
+CỪU GIẢ CẦY
+CỪU HẤP
+CỪU NƯỚNG MUỐI ỚT
+CỪU NƯỚNG SATE
+CỪU XÀO LĂN
+ĐẬU BẮP
+ĐẬU BẮP LUỘC
+ĐẬU BẮP XÀO TỎI
+ĐẬU BẮP XÀO TRỨNG
+ĐẬU BASA
+ĐẬU BASA HÀN QUỐC
+ĐẦU CÁ BÓP(KG)
+ĐẬU HỦ CÁ
+ĐẬU HỦ NON
+ĐÂU HỦ NƯỚNG GIẤY BẠC
+ĐẬU PHỘNG
+DÊ HẤP GIẢ CẦY
+DÊ HẤP GIẢ CẦY
+DÊ NẤU GIẢ CẦY
+DÊ NƯỚNG MUỐI ỚT
+DÊ NƯỚNG SATE
+DÊ XÀO LĂN
+DỒI TRƯỜNG
+DỒI TRƯỜNG(KG)
+DÔNG NƯỚNG MUỐI ỚT
+DÔNG(KG)
+DUNHILL
+ĐUÔI BÒ
+ĐUÔI BÒ CHIÊN MẮM
+ĐUÔI BÒ HẦM TIÊU
+ĐUỐI BÒ SATE
+ĐUÔI BÒ(KG)
+ẾCH CHIÊN BƠ
+ẾCH CHIÊN GIÒN
+ẾCH CHIÊN MẮM
+Ếch Con
+ẾCH CON
+ẾCH NẤU CHUỐI
+ẾCH NẤU LÁ GIANG
+ẾCH NƯỚNG MUỐI ỚT
+ẾCH NÚP RƠM
+ẾCH RÔ TI
+ẾCH UM BÚN TÀU
+ẾCH XÀO CẢI CHUA
+Ếch Xào Lăn
+ẾCH XÀO LĂN
+ẾCH XÀO SẢ ỚT
+GÀ (SỐ CON)
+GÀ TRE
+GÀ(SỐ KG)
+GẠO
+GỎI BAO TỬ KHỔ QUA
+GỎI BẮP BÒ
+GỎI BẮP CHUỐI TÔM THỊT
+GỎI BÒ BẮP CHUỐI
+GỎI BÒ BÓP THẤU
+GỎI BÒ KHÁNH KỲ
+GỔI BỒN BỒN TÔM THỊT
+GỎI CÁ CƠM
+GỎI CÁ MAI
+GỎI DÔNG
+GỎI ẾCH XÉ PHAY
+GỎI HẢI SẢN
+GỎI MỰC THÁI LAN
+GỎI NGÓ SEN TÔM THỊT
+GỎI SỨA
+GỎI THẬP CẨM
+GỎI XOÀI
+HÀU
+HÀU ĐÚT LÒ
+HÀU NƯỚNG MỠ HÀNH
+HÀU NƯỚNG PHOMAI
+HÀU SUSHI
+HÀU TÁI CHANH
+HẾN XÚC BÁNH TRÁNG
+HEO RỪNG
+HEO RỪNG(KG)
+HOA THIÊN LÝ LUỘC
+HOA THIÊN LÝ XÀO BÒ
+HOA THIÊN LÝ XÀO TỎI
+KHĂN LẠNH
+KHÔ GÀ LÁ CHANH
+KHỔ QUA CHÀ BÔNG
+KHỔ QUA LUỘC
+KHỔ QUA THÊM
+KHỔ QUA XÀO DẦU
+KHỔ QUA XÀO TỎI
+KHỔ QUA XÀO TRỨNG
+KHO QUẸT
+KHOAI TÂY CHIÊN
+KHOÁNG CHANH
+LẨU CÁ DIÊU HỒNG
+LẨU CÁ LÓC
+LẨU ĐẦU CA BÓP
+LẨU ĐẦU CÁ THU
+LẨU ĐÀU MÌNH CÁ BÓP
+LẨU ẾCH
+LẨU HẢI SẢN
+LẨU HẢI SẢN
+LẨU KHỎ QUA CÁ THÁC LÁT
+LẨU LƯƠN
+LẨU MẮM
+LẨU MÌNH CÁ BÓP
+LẨU NẤM
+LẨU THÁI
+LẨU THẬP CẨM
+LÒNG GÀ
+LÒNG GÀ HẤP
+LÒNG GÀ NẤU LÀ GIANG
+LÒNG GÀ NẤU MIẾN
+LONG GÀ XÀO CẢI
+LÒNG GÀ XÀO HỦ TIẾU
+LÒNG GÀ XÀO MĂNG TÂY
+LÒNG GÀ XÀO MÌ
+LÒNG GÀ XÀO MIẾN
+LÒNG GÀ XÀO MIẾN
+LÒNG GÀ XÀO MƯỚP
+LÒNG GÀ XÀO MƯỚP MIẾN
+LÒNG XÀO CHUA NGỌT
+LÒNG XÀO KHỔ QUA
+LONG XAO THIEN LY
+LƯỠI HEO
+LƯƠN BẰM XÚC BÁNH ĐA
+LƯƠN CHIÊN GIÒN
+LƯƠN HẤP SẢ
+LƯƠN NƯỚNG
+LƯƠN UM BÚN TÀU
+LƯƠN UM CHUỐI
+LƯƠN XÀO LĂN
+LƯƠN XÀO SẢ ỚT
+LƯƠN(KG)
+MĂNG TÂY LUỘC
+MĂNG TÂY XÀO BÒ
+MĂNG TÂY XÀO TỎI
+MỀ
+MÌ THẬP CẨM
+MÌ TÔM
+MÌ TÔM
+MÌ TÔM (TÔM)
+MÌ TÔM BÒ
+MÌ XÀO
+MÌ XÀO BÒ
+MÌ XÀO CHAY
+MÌ XÀO CHAY NẤM
+MÌ XÀO GIÒN
+MÌ XÀO GIÒN CHAY
+MÌ XÀO HẢI SẢN
+MÌ XÀO THẬP CẨM
+MÌ XÀO THẬP CẨM
+MIẾN THÊM
+MIẾN XÀO BÒ
+MIẾN XÀO HẢI SẢN
+MIẾN XÀO THẬP CẨM
+MIẾN XÀO THỊT HEO
+MÌNH CÁ BÓP(KG)
+MỒI CÂU
+MÓNG HEO CHIÊN GIÒN
+MÓNG HEO(KG)
+MÙ TẠC
+MỦ TRÔM
+MỰC 1 NẮNG(CON)
+MỰC CHIÊN GIÒN
+MỰC CHIÊN MẮM
+MỰC CHIÊN XÙ
+MỰC HẤP
+MỰC KG
+MỰC KHÔ
+MỰC KHÔ(CON)
+MỰC LÁ
+MỰC MỘT NẮNG
+MỰC NANG
+MỰC NHÚNG GIẤM
+MỰC NƯỚNG MUỐI ỚT
+MỰC SA TẾ
+MỰC TRỨNG (KG)
+MỰC TRỨNG CHIÊN GIÒN
+MỰC TRỨNG CHIÊN MẮM
+MỰC TRỨNG HẤP
+MỰC TRỨNG NƯỚNG
+MỰC XÀO CHUA NGỌT
+MỰC XÀO SẢ ỚT
+MƯỚP HẤP CÁ THÁC LÁT
+NẤM NƯỚNG GIẤY BẠC
+NẤM XÀO
+NGAO HẤP LÁ ME
+NGAO HẤP SẢ
+NGAO HẤP THÁI
+NGAO XÀO QUẾ
+NGHẸ(KG)
+NGŨ QUẢ LUỘC
+NƯỚC ĐÁ CHANH
+NUOC GUM GUM
+NƯỚC KHOÁNG
+NƯỚC YẾN
+ỐC BƯƠU XÀO SẢ ỚT
+ÔC BƯU UM CHUỐI
+ỐC HƯƠNG
+ỐC LEN XÀO DỪA
+PHẦN ĂN
+PHO MAI
+PHỤ THU 4 MÓN
+PHỤ THU BIA
+PHỤ THU CHÁO
+PHỤ THU HẤP
+PHỤ THU HẤP NƯỚNG
+PHỤ THU KHO NƯỚNG
+PHU THU LA GIANG + XAO MUOP
+PHỤ THU MĂNG CHUA
+PHỤ THU MĂNG TÂY
+PHU THU MON
+PHU THU MUC
+PHỤ THU NAI NHÚNG DẤM
+PHỤ THU NẤM
+PHỤ THU NẤU MIÊN
+PHU THU NƯỚNG
+PHỤ THU P.VIP
+PHỤ THU RANG MUỐI
+PHỤ THU TÔM NƯỚNG
+PHỤ THU XÀO HỦ TIẾU
+PHU THU XAO MANG TAY
+PHỤ THU XÀO MÌ
+PHỤ THU XÀO MIẾN
+PHỤ THU XÉ PHAY
+QUẸT GAS
+RĂNG MỰC
+RĂNG MỰC CHIÊN MẮM
+RĂNG MỰC LỚN
+RAU LANG LUỘC
+RAU LANG XÀO BÒ
+RAU LANG XÀO TỎI
+RAU MUỐNG LUỘC
+RAU MUỐNG XÀO BÒ
+RAU MUỐNG XÀO TỎI
+RAU THẬP CẨM LUỘC
+RAU THÊM
+RAU TRỘN GỎI
+RƯỢU VANG
+SAKE CHIÊN
+SÒ HUYẾT(KG)
+SODA
+SODA CHANH ĐƯỜNG
+SODA KEM
+STING
+STRONG BOW
+Sụn Gà
+SỤN GÀ
+SỤN GÀ(KG)
+SUỐI CHANH
+SUỐI LẠT
+SUỐI NGỌT
+SƯỜN DÊ NƯỚNG MUỐI ỚT
+SƯỜN HEO NẤU ĐẬU
+SƯỜN HEO NƯỚNG MỌI
+SƯỜN HEO(KG)
+SƯỜN NON CHIÊN GIÒN
+SƯỜN NON CHUA NGỌT
+SƯỜN NƯỚNG KIM CHI
+SƯỜN NƯỚNG MẬT ONG
+SƯỜN NƯỚNG MUỐI ỚT
+SÚP HẢI SẢN
+SÚP NẤM
+SÚP THẬP CẨM
+SÚP TÔM
+TẨY CHANH ĐƯỜNG
+Tên hàng hóa
+THỊT BA CHỈ(KG)
+THỊT BÒ(KG)
+THỊT DÊ/CỪU(KG)
+THỊT LUỘC CÀ PHÁO
+THỊT LUỘC CÀ PHÁO
+THUỐC 555 ANH
+THUỐC 555 BẠC
+THUỐC 555 VIỆT
+THUỐC CAPRI
+THUỐC JET
+THUỐC MÈO
+THUỐC MÈO XANH
+THUỐC NGỰA
+THUỐC NGỰA
+TÔM
+TÔM CHIÊN XÙ
+TÔM ĐÔNG TUYẾT
+TÔM HẤP
+TÔM KG
+TÔM MÙ TẠC
+TÔM NƯỚNG MỌI
+TÔM NƯỚNG MUỐI ỚT
+TÔM RANG ME
+TÔM RANG MUỐI
+TÔM TÁI CHANH
+TRÁI CÂY
+TRANG TRÍ SINH NHẬT
+TRỨNG
+TRÚNG CHIÊN
+TRỨNG CHIÊN HÀNH
+TRỨNG CHIÊN THỊT BẦM
+TRỨNG LUỘC
+TU HÀI
+VODKA LỚN
+VODKA NHỎ
+XÀ LÁCH TRỘN BÒ
+XÀ LÁCH TRỘN CÁ HỘP
+XÀ LÁCH TRỘN DẦU GIẤM
+XÀ LÁCH XOONG TRỘN BÒ
+XÀ LÁCH XOONG XÀO TỎI
+XÁ XỊ
 
 
 

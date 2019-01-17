@@ -30,6 +30,7 @@ public class KhanhKy {
 				try {
 					MainPage khanhky = new MainPage();
 					//KhanhKy window = new KhanhKy();
+
 					//window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

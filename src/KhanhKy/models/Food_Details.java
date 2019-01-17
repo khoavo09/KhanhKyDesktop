@@ -11,6 +11,12 @@ public class Food_Details {
     double subTotal;
 	private Ingredient ingredient;	// Add constructor for this later
 	
+	
+	
+	public Food_Details() {
+		super();
+	}
+
 	public Food_Details(String category, String name, double price) {
 		super();
 		this.category = category;

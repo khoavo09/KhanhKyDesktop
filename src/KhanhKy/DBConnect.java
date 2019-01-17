@@ -31,7 +31,7 @@ public class DBConnect {
 	// Retrieve data
 	public List<Food_Details> getMenuData() {
 		List<Food_Details> allFood= new ArrayList<Food_Details>();
-
+		allFood.add(new Food_Details(0,"null", "null", "null","null", -1 ));
 		try {
 			String query = "select * from food";
 			results = st.executeQuery(query);
@@ -45,7 +45,6 @@ public class DBConnect {
 				Food_Details foodDetail = new Food_Details(id,name, viet_name, category, viet_category, price);
 				allFood.add(foodDetail);
 				//System.out.println(foodDetail.getVietnameseName());
-
 			}			
 		}
 		catch(Exception err) {
@@ -68,7 +67,6 @@ public class DBConnect {
 				Table table = new Table(id, area, number, status);
 				allTables.add(table);
 				//System.out.println(foodDetail.getVietnameseName());
-
 			}			
 		}
 		catch(Exception err) {
@@ -96,8 +94,76 @@ public class DBConnect {
 	
 	public int getActiveOrder(String area, int number) {
 		try {
-			String query = "SELECT id from all_tables where area = '" +area +"' AND number ='" +number+ "' AND status = 0";
+			
+			// get the id
+			// if occupied -> search for that table id in order
+			// if empty -> set to occupied
+			//		add new order id for that table id
+			
+			String query = "SELECT * from all_tables where area = '" +area +"' AND number ='" +number+ "'";
 			results =  st.executeQuery(query);
+			int activeOrderID= -1;
+			
+			if(results.next()) {
+				// 0 means empty
+				if(results.getInt("status") == 0) {
+					String sql = "INSERT INTO all_orders(table_id) VALUES(?)";
+			        PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			        statement.setInt(1, results.getInt("id"));
+					System.out.println(statement);
+
+			        
+			        int affectedRows = statement.executeUpdate();
+
+			        if (affectedRows == 0) {
+			            throw new SQLException("Creating order failed, no rows affected.");
+			        }
+
+			        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+			            if (generatedKeys.next()) {
+			            	long temp = generatedKeys.getLong(1);
+			            	activeOrderID = (int)temp;
+					        sql = "UPDATE all_tables set status = 1 where id=" + results.getInt("id");
+							st.executeUpdate(sql);
+			            	//activeOrderID = generatedKeys.getLong(1);
+			            	//System.out.println("Active: "+activeOrderID);
+			            	return activeOrderID;
+			            }
+			            else {
+			                throw new SQLException("Creating order failed, no ID obtained.");
+			            }
+			        }
+				}
+				else {
+					int tableID = results.getInt("id");
+					try {
+						query = "SELECT * from all_orders where table_id='" + tableID + "' and status=0";
+						results = st.executeQuery(query);
+						while(results.next()) {
+							activeOrderID = results.getInt("id");
+							System.out.println(activeOrderID);
+							return activeOrderID;
+						}		
+					}
+					catch(Exception err) {
+						System.out.println(err);
+					}
+				}
+
+			}
+
+			
+			
+//			if(!results.next()) {
+//				String sql = "INSERT INTO all_orders(table_id) VALUES( "+results.getInt("id") + " )";
+//				System.out.println("EMPTY AF");
+//			}
+//			else {
+//	            do {
+//					System.out.println(results.getInt("id"));
+//	            } while (results.next());
+//			}
+
 //			return results.getInt("id");
 
 
@@ -106,8 +172,25 @@ public class DBConnect {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	
+	public List<Integer> getOrderDetails(int orderID) {
+		List<Integer> salesInTheOrder= new ArrayList<Integer>();
+		try {
+			String query = "select * from sale where order_id = "+orderID;
+			results = st.executeQuery(query);
+			while(results.next()) {
+				int id = results.getInt("food_id");
+				salesInTheOrder.add(id);
+				//System.out.println(foodDetail.getVietnameseName());
 
-		
+			}			
+		}
+		catch(Exception err) {
+			System.out.println(err);
+		}
+		return salesInTheOrder;
 	}
 	
 	public boolean insertSale(List<Sale> saleList) {
@@ -133,6 +216,18 @@ public class DBConnect {
 			System.out.println(err);
 		}
 		return false;
+	}
+	
+	public void closeOrder(int orderID, String areaName, int tableNum) {
+		try {
+			String query = "update all_orders set status = 1 where id='" + orderID +"'";
+			st.executeUpdate(query);	
+			query = "update all_tables set status = 0 where area='" + areaName +"' and number='" +tableNum+ "'";
+			st.executeUpdate(query);	
+		}
+		catch(Exception err) {
+			System.out.println(err);
+		}
 	}
 	
 }
