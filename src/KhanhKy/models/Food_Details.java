@@ -7,7 +7,7 @@ public class Food_Details {
 	private String vietnameseName;
 	private String name;
 	private double price;
-	private int amount;
+	private double amount;
     double subTotal;
 	private Ingredient ingredient;	// Add constructor for this later
 	
@@ -73,15 +73,15 @@ public class Food_Details {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public int getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	
-	public void increaseAmount(int num) {
+	public void increaseAmount(double num) {
 		this.amount += num;
 	}
 

@@ -68,16 +68,26 @@ public class Order {
 		this.tax = tax;
 	}
 	
-	public void addAmountToOrderList(Food_Details item, int amount) {
+	public void addAmountToOrderList(Food_Details item, double amount, String type) {
 		int loc = orderList.indexOf(item);
         if(loc == -1) {
-        	item.increaseAmount(amount);
+        	if(type.equals("set")) {
+            	item.setAmount(amount);
+        	}
+        	else {
+        		item.increaseAmount(amount);
+        	}
         	item.calculateSubTotal();
         	orderList.add(item);
             //this.count += amount;
         }
         else {
-        	orderList.get(loc).increaseAmount(amount);
+        	if(type.equals("set")) {
+            	orderList.get(loc).setAmount(amount);
+        	}
+        	else {
+            	orderList.get(loc).increaseAmount(amount);
+        	}
         	orderList.get(loc).calculateSubTotal();
         	//return true;
         }
