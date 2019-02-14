@@ -75,26 +75,7 @@ CREATE TRIGGER delete_sales_of_order
  DELETE FROM sale
  WHERE sale.order_id = old.id;
  
- DROP TRIGGER IF EXISTS delete_sale_when_amount_0;
  
- CREATE TRIGGER	 delete_sale_when_amount_0
- AFTER UPDATE ON sale
- FOR EACH ROW
- DELETE FROM sale 
- WHERE new.amount = 0 and old.id = new.id;
- 
- DROP TRIGGER IF EXISTS delete_sale_when_amount_0;
- 
- DELIMITER $$
-
-    CREATE TRIGGER delete_sale_when_amount_0 AFTER UPDATE ON sale
-    FOR EACH ROW BEGIN
-      IF (NEW.amount = 0) THEN
-            DELETE FROM sale where id = NEW.id;
-      END IF;
-    END$$
-    
-DELIMITER;
  
 
 
