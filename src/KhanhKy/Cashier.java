@@ -1,6 +1,5 @@
 package KhanhKy;
 
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -13,24 +12,19 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.android.print.sdk.CanvasPrint;
-import com.android.print.sdk.PrinterInstance;
+
 
 import KhanhKy.models.Food_Details;
 import KhanhKy.models.Order;
 import KhanhKy.models.Sale;
 
-import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
-import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -38,12 +32,7 @@ import javax.swing.JTextField;
 public class Cashier extends JFrame implements ActionListener{
 
 	List<String> foodCategories = new ArrayList<String>();
-	//String foodCategories[] = {"Bò", "Heo", "Heo Rừng", "Gà" , "Mực", "Tôm", "Cá", "Lươn", "Ếch", "Dôm", "Bồ Câu", "Chim sẽ"};
-	String foodCategoriesEN[]= {"Bo", "Heo", "Heo Rung", "Ga", "Muc", "Tom", "Ca", "Luon", "Ech", "Dom", "Bo_Cau", "Chim_se"};
-	String beefFood[] = {"Bo Luc Lac", "Bo Xao"};
-	String porkFood[]= {"Heo Nuong", "Heo Quay"};
-	String chickenFood[] = {"Ga Nuong", "Ga Kho"};
-	
+
 	private JPanel contentPane;
 	private JPanel buttonPanel = new JPanel();
 	private JPanel btnDetailsPanel = new JPanel();
@@ -67,11 +56,11 @@ public class Cashier extends JFrame implements ActionListener{
 	private final JButton submitButton = new JButton("Tinh Tien");
 	private String receiptToPrint;
 	
-    private PrinterInstance mPrinter;
 
+    // some global variable to print the receipt correctly
     int k= 0;
-	int linesBefore=2;
-    boolean needSpace;
+	int linesBefore=5;
+    boolean isOrderEmpty;
 
 
 
@@ -167,24 +156,30 @@ public class Cashier extends JFrame implements ActionListener{
 		
 		
 		if(orderDetailsTxt.getText().equals("")) {
-    		List<Integer> foodIDinOrder = connect.getOrderDetails(orderID);
+    		List<Sale> foodIDinOrder = connect.getOrderDetails(orderID);
     		System.out.println("FOOD ID"+foodIDinOrder);
     		for(int i=0; i< foodIDinOrder.size();i++) {
-    			myOrder.addAmountToOrderList(allFood.get(foodIDinOrder.get(i)),1, "inc");
+    			myOrder.addAmountToOrderList(allFood.get(foodIDinOrder.get(i).getFoodID()),foodIDinOrder.get(i).getAmount(), "inc");
     		}
         
-    		needSpace = false;
 
     		AmountJTextFields.clear();
+    		if(myOrder.getOrderList().size() >0) {
+    			System.out.println("ONLY ONE");
+    			isOrderEmpty = false;
+    		}
+    		else {
+    			isOrderEmpty = true;
+    		}
 		printOrderOnScreen();
 		addEditTextField();
+
 
     	}
 	}
 	
 	public void actionPerformed(ActionEvent e){
 	    String a = e.getActionCommand();
-	    System.out.println("a"+a);
 		List<Food_Details>  tempFood = new ArrayList<Food_Details>();
 		List<String> DishesInSelectedCategory = new ArrayList<String>();
 
@@ -195,23 +190,18 @@ public class Cashier extends JFrame implements ActionListener{
 	    			//DishesInSelectedCategory = getDishesInTheCategory(foodCategories.get(i));
 	    		}
 	    }
-
-	    if(a.equals("1Field")) {
-	    	System.out.println("I GOT IT");
-	    }
 	    
 	    if(a.equals("Go Back")) {
 	    	SelectTable selectTable = new SelectTable();
 	    	selectTable.setVisible(true);
-            List<Food_Details> localOrder = myOrder.getOrderList();
-            List<Sale> saleList = new ArrayList<Sale>();
-
-            for(int i=0; i < newSaleInOrder.size();i++) {
-            	Sale sale = new Sale(newSaleInOrder.get(i).getId(),orderID,0);
-            	saleList.add(sale);
-            }
-            connect.insertSale(saleList);
-
+//            List<Food_Details> localOrder = myOrder.getOrderList();
+//            List<Sale> saleList = new ArrayList<Sale>();
+//
+//            for(int i=0; i < newSaleInOrder.size();i++) {
+//            	Sale sale = new Sale(newSaleInOrder.get(i).getId(),orderID,0);
+//            	saleList.add(sale);
+//            }
+//            connect.insertSale(saleList);
 	    	dispose();
 	    }
 	    
@@ -285,6 +275,7 @@ public class Cashier extends JFrame implements ActionListener{
 //		}
 		int j = 0;
 		
+		// prepare the bill, and print it on the right side of the screen
         List<Food_Details> localOrder = myOrder.getOrderList();
         myOrder.CalculateTotal();
         //orderDetailsTxt.append(message);
@@ -303,6 +294,7 @@ public class Cashier extends JFrame implements ActionListener{
         }
 
         orderDetailsTxt.append(String.format("%25s %22.1f\n","Tổng Cộng:", myOrder.getGrandTotal()));
+
 		
         receiptToPrint = orderDetailsTxt.getText();
     	orderPanel.repaint();
@@ -313,18 +305,21 @@ public class Cashier extends JFrame implements ActionListener{
 	private void addEditTextField() {
         List<Food_Details> localOrder = myOrder.getOrderList();
 
-        if(k==1) {
-        	editAmountPanel.removeAll();
-        }
-        
+//        if(k==1) {
+//        	editAmountPanel.removeAll();
+//        }
+
         
         //System.out.println("amount"+ AmountJTextFields.size());
        // System.out.println(localOrder.size());
 
-        if(AmountJTextFields.size() == 0 && localOrder.size() > 0) {
-        	System.out.println("INSIDE");
+        if(isOrderEmpty == false) {
+       // if(AmountJTextFields.size() == 0 && localOrder.size() > 0) {
+        	isOrderEmpty = true;
+        	System.out.println("INSIDE FIRST");
+
 			for(int i=0;i<localOrder.size();i++) {
-    				editAmountPanel.setBounds(1150,142,70, (i+1) * 16);
+    				editAmountPanel.setBounds(1150,142,90, (i+1) * 16);
 	            JTextField editAmountTextField = new JTextField(Double.toString(localOrder.get(i).getAmount()));
 	            AmountJTextFields.add(editAmountTextField);
 	            JButton deleteBtn = new JButton("X");
@@ -333,6 +328,7 @@ public class Cashier extends JFrame implements ActionListener{
 	            editAmountTextField.setName(Integer.toString(i));
 	            
 
+	            // add listener to the jtextfield
 	            editAmountTextField.getDocument().addDocumentListener(new DocumentListener() {
 
 						@Override
@@ -354,11 +350,7 @@ public class Cashier extends JFrame implements ActionListener{
 							
 						}
 						public void warn() {
-//		            		     if (Double.parseDouble(editAmountTextField.getText())<=0){
-//		            		       JOptionPane.showMessageDialog(null,
-//		            		          "Error: Please enter number bigger than 0", "Error Massage",
-//		            		          JOptionPane.ERROR_MESSAGE);
-//		            		     }
+							System.out.println("called warn 1");
 							 int foodID = -1;
 		            		     int loc = -1;
 		            		     double amount =0;
@@ -373,45 +365,94 @@ public class Cashier extends JFrame implements ActionListener{
 		            		     }
 		            		     foodID = localOrder.get(loc).getId();
 		             		myOrder.addAmountToOrderList(allFood.get(foodID),amount, "set");
+		             		connect.updateSale(new Sale(foodID,orderID,amount,0), "set");
 		             		printOrderOnScreen();
-		            		    System.out.println(localOrder.get(loc).getAmount());
 		            		  }
 	            		});
 	            editAmountPanel.add(editAmountTextField);
 	            editAmountPanel.add(deleteBtn);
 	            linesBefore = orderDetailsTxt.getLineCount();
+	            //connect.insertSale(new Sale(localOrder.get(localOrder.size() -1).getId(),orderID,0));
 	            k=i+1;
-	            needSpace=true;
 			}
 		}
+        
+        // add a jtextfield when add a new item to the order
         else if(linesBefore != orderDetailsTxt.getLineCount()) {
-        		if(needSpace) {
-        			editAmountPanel.setBounds(1130,142,70, 16 + k * 16);
-        		}
-        		else {
-        			editAmountPanel.setBounds(1130,142,70, k * 16);
-        		}
+        	System.out.println("INSIDE" + orderDetailsTxt.getLineCount());
+
+    		k++;
+    			editAmountPanel.setBounds(1150,142,90, k * 16);
+
             editAmountPanel.repaint();
             editAmountPanel.revalidate();
-            System.out.println(k);
             JTextField editAmountTextField = new JTextField("");
-            editAmountTextField.setActionCommand(k +"Field");
-            editAmountTextField.addActionListener(this);
-            AmountJTextFields.add(editAmountTextField);
+            editAmountTextField.setName(Integer.toString(k-1));    
             if(!localOrder.isEmpty()) {
         			editAmountTextField.setText("1.0");
             }
+
+            // add listener to the jtextfield
+            editAmountTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+						warn();
+						
+					}
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						// TODO Auto-generated method stub
+						//warn();
+						
+					}
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						warn();
+						// TODO Auto-generated method stub
+						
+					}
+					public void warn() {
+						System.out.println("called warn");
+						 int foodID = -1;
+	            		     int loc = -3;
+	            		     double amount =0;
+	            		     try {
+		            		     loc = Integer.parseInt(editAmountTextField.getName());
+		            		     amount = Double.parseDouble(editAmountTextField.getText());
+	            		     }
+	            		     //fix this later
+	            		     catch (NumberFormatException e){
+		            		      JOptionPane.showMessageDialog(null,"Error: Wrong format", "Error Massage",
+	            		          JOptionPane.ERROR_MESSAGE);
+	            		     }
+	            		     foodID = localOrder.get(loc).getId();
+	             		myOrder.addAmountToOrderList(allFood.get(foodID),amount, "set");
+	             		System.out.println(foodID + "-----" + orderID + "-----" + amount);
+	             		connect.updateSale(new Sale(foodID,orderID,amount,0), "set");
+	             		printOrderOnScreen();
+	            		  }
+            		});
+            editAmountTextField.setActionCommand(k +"Field");
+            AmountJTextFields.add(editAmountTextField);
             JButton deleteBtn = new JButton("X");
             deleteBtn.setActionCommand( k + "Btn");
             deleteBtn.addActionListener(this);
             editAmountPanel.add(editAmountTextField);
             editAmountPanel.add(deleteBtn);
             linesBefore = orderDetailsTxt.getLineCount();
-        		k++;
+            connect.insertSale(new Sale(localOrder.get(localOrder.size() -1).getId(),orderID,0));
         }
+        // add identical item to the list (change the amount of the corresponding item)
         else {
         		if(!localOrder.isEmpty()) {
         			for(int i=0;i<localOrder.size();i++) {
+        				double oldAmount = Double.parseDouble(AmountJTextFields.get(i).getText());
+        				if(oldAmount != localOrder.get(i).getAmount()) {
+        					Sale sale = new Sale(localOrder.get(i).getId(),orderID,0);
+        					connect.updateSale(sale, "inc");
+        				}
         				AmountJTextFields.get(i).setText(Double.toString(localOrder.get(i).getAmount()));
         			}
         		}

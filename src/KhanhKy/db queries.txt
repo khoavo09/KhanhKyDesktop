@@ -45,7 +45,8 @@ CREATE TABLE sale (
 id int  NOT NULL AUTO_INCREMENT,
 food_id smallint, 
 order_id smallint,
-status tinyint(1) NOT NULL, 
+status tinyint(1) NOT NULL,
+amount FLOAT unsigned, 
 primary key (id),
 foreign key (food_id) REFERENCES food(id)
 ON UPDATE CASCADE ON DELETE CASCADE,
@@ -60,12 +61,41 @@ CREATE TABLE all_orders (
 id mediumint unsigned auto_increment primary key,
 table_id smallint NOT NULL,
 status TINYINT(1) DEFAULT 0,
+total FLOAT unsigned,
 foreign key (table_id) REFERENCES all_tables(id) 
 ON UPDATE CASCADE ON DELETE CASCADE
 )ENGINE=MYISAM;
 ALTER TABLE all_orders AUTO_INCREMENT = 1;
 
+DROP TRIGGER IF EXISTS delete_sales_of_order;
 
+CREATE TRIGGER delete_sales_of_order
+ AFTER DELETE ON all_orders
+ FOR EACH ROW
+ DELETE FROM sale
+ WHERE sale.order_id = old.id;
+ 
+ DROP TRIGGER IF EXISTS delete_sale_when_amount_0;
+ 
+ CREATE TRIGGER	 delete_sale_when_amount_0
+ AFTER UPDATE ON sale
+ FOR EACH ROW
+ DELETE FROM sale 
+ WHERE new.amount = 0 and old.id = new.id;
+ 
+ DROP TRIGGER IF EXISTS delete_sale_when_amount_0;
+ 
+ DELIMITER $$
+
+    CREATE TRIGGER delete_sale_when_amount_0 AFTER UPDATE ON sale
+    FOR EACH ROW BEGIN
+      IF (NEW.amount = 0) THEN
+            DELETE FROM sale where id = NEW.id;
+      END IF;
+    END$$
+    
+DELIMITER;
+ 
 
 
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Xoài", 1, 0);
@@ -133,529 +163,491 @@ INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 9, 0);
 INSERT INTO all_tables ( area ,number, status) VALUES ( "Chuối", 1, 0);
 
 
-
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Luc Lac' , 'Bò Lúc Lắc', 'Bo' , 'Bò' , 30);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Nuong' , 'Bò Nướng', 'Bo' , 'Bò' , 40);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Bo Xao' , 'Bò Xào', 'Bo' , 'Bò' , 50);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Quay' , 'Heo Quay', 'Heo' , 'Heo' , 20);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Nuong' , 'Heo Nướng', 'Heo' , 'Heo' , 50);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('Heo Ruong Nuong' , 'Heo Rường Nướng', 'Heo Ruong' , 'Heo Rường' , 50);
-
-
-
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG ME' , 'BA CHỈ NƯỚNG MẺ', 'BA CHI' , 'BA CHỈ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG XIEN QUE' , 'BA CHỈ NƯỚNG XIÊN QUE', 'BA CHI' , 'BA CHỈ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI XAO CAI CHUA' , 'BA CHỈ XÀO CẢI CHUA', 'BA CHI' , 'BA CHỈ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA' , 'BABA', 'BABA' , 'BABA' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA CON' , 'BABA CON', 'BABA' , 'BABA' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH BAO' , 'BÁNH BAO', 'BANH' , 'BÁNH' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH MI' , 'BÁNH MỈ', 'BANH' , 'BÁNH' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG' , 'BÁNH TRÁNG', 'BANH' , 'BÁNH' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG MAM' , 'BÁNH TRÁNG MẮM', 'BANH' , 'BÁNH' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG NHUNG' , 'BÁNH TRÁNG NHÚNG', 'BANH' , 'BÁNH' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU' , 'BAO TỬ', 'BAO TU' , 'BAO TỬ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU HAM TIEU' , 'BAO TỬ HẦM TIÊU', 'BAO TU' , 'BAO TỬ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU XAO CHUA' , 'BAO TỬ XÀO CHUA', 'BAO TU' , 'BAO TỬ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO HAM TIEU' , 'BẮP BÒ HẦM TIÊU', 'BAP BO' , 'BẮP BÒ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO SATE' , 'BẮP BÒ SATE', 'BAP BO' , 'BẮP BÒ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO' , 'BẮP BÒ', 'BAP BO' , 'BẮP BÒ' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO HANH' , 'BẮP XÀO HÀNH', 'BAP' , 'BẮP' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO THIT BAM' , 'BẮP XÀO THỊT BẰM', 'BAP' , 'BẮP' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO TOM' , 'BẮP XÀO TÔM', 'BAP' , 'BẮP' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU', 'BẦU', 'BAU' , 'BẦU' , 99);
-INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU LUOC', 'BẦU LUỘC', 'BAU' , 'BẦU' , 99);
-
-
-A 7UP
-//BA CHỈ NƯỚNG MẺ
-//BA CHỈ NƯỚNG XIÊN QUE
-//BA CHỈ XÀO CẢI CHUA
-//BABA
-//BABA CON
-//BÁNH BAO
-//BÁNH MỈ
-BÁNH TRÁNG
-BÁNH TRÁNG MẮM
-BÁNH TRÁNG NHÚNG
-BAO TỬ (KG)
-BAO TỬ HẦM TIÊU
-BAO TỬ XÀO CHUA
-BẮP BÒ HẦM TIÊU
-BẮP BÒ SATE
-BẮP BÒ(KG)
-BẮP XÀO HÀNH
-BẮP XÀO THỊT BẰM
-BẮP XÀO TÔM
-BẦU
-BẦU LUỘC
-BIA AMSTEL CHAI
-BIA AMSTELL LON
-BIA BIVINA
-BIA HENIKEN CHAI
-BIA HENIKEN LON
-BIA LARUE
-BIA SÀI GÒN
-BIA TIGER BẠC
-BIA TIGER CHAI
-BIA TIGER LON
-BÒ 1 NẮNG KIẾN VÀNG
-BÒ ÁP CHẢO
-BÒ BITTET KHOAI TÂY CHIÊN
-BỒ CÂU CHIÊN MẮM
-BỒ CÂU HẦM KHOAI MÔN
-BỒ CÂU NẤU CHÁO
-BỒ CÂU NHỒI KHỔ QUA
-BỒ CÂU NƯỚNG MẮM NHỈ
-BỒ CÂU NƯỚNG MUỐI ỚT
-BỒ CÂU QUAY CHẢO
-BỒ CÂU RÔ TI
-BỒ CÂU TIỀM ỚT XANH
-BỒ CÂU TIỀM THUỐC BẮC
-BỒ CÂU(CON)
-BÒ HÚC
-BÒ LÁ LỐT
-BÒ LÚC LẮC KHOAI TÂY CHIÊN
-BÒ NÉ
-BÒ NHÚNG GIẤM
-BÒ NHÚNG MẺ
-BÒ NƯỚNG KIỂU NGA
-BÒ NƯỚNG LÁ LỐP
-BÒ NƯỚNG MÈ
-BO NƯỚNG MUỐI ỚT
-BÒ NƯỚNG NGŨ SẮC
-BÒ NƯỚNG PHO MAI
-BÒ QUANH LỬA HỒNG
-BÒ SỐT ME
-BÒ TÁI CHANH
-BÒ TÁI RAU MUỐNG
-BÒ XÀO CẢI
-BÒ XÀO CHUA NGỌT
-BÒ XÀO KHỔ QUA
-BÒ XÀO SẢ ÓT
-BÔNG CẢI LUỘC
-BÔNG CẢI XÀO BÒ
-BÔNG CẢI XÀO TỎI
-BÚN
-CÁ BÒ DA(KG)
-CÁ BÒ LỘT  DA
-CA BOP
-CÁ BÓP
-CÁ BÓP KHO TỘ
-CÁ CHÉP
-CÁ CHÉP KG
-CÀ CHUA XÀO CẢI THẢO
-CÀ CHUA/DƯA LEO
-CÁ CƠM MỒM TRỘN XOÀI
-CÁ DÃNH NƯỚNG
-CÁ DÃNH TRỘN XOÀI
-CÁ DIÊU HỒNG CHIÊN
-CÁ DIÊU HỒNG CHIÊN XÙ
-CÁ DIÊU HỒNG NƯỚNG MUỐI ỚT
-CÁ DIÊU HỒNG RANG MUỐI
-CÁ DIÊU HỒNG UM BÚN TÀU
-CÁ ĐUỐI NƯỚNG
-CÁ KHOAI CHIÊN
-CÁ KHOAI NƯỚNG
-CÁ LĂN
-CÁ LĂN KG
-CÁ LỐC
-CÁ LÓC CHIÊN XÙ
-CÁ LÓC HẤP
-CÁ LÓC HẤP BẦU
-CÁ LỐC KG
-CÁ LÓC NƯỚNG GIẤY BẠC
-CÁ LÓC NƯỚNG LÁ TÍA TÔ
-CÁ LÓC NƯỚNG MUỐI ỚT
-CÁ LÓC NƯỚNG TRUI
-CÁ LỐC UM BÚN TÀU
-CÁ MAI(KG)
-CÁ MÚ
-CÀ RỐT PHO MAI
-CÁ THÁC  LÁT(KG)
-CÁ THÂC LÁC CHIÊN
-CÁ THÁC LÁT THÊM
-CÁ THU
-CÁ THU ĐAO
-CÀ TÍM NƯỚNG MỠ HÀNH
-CÀ TÍM SỐT THỊT BẰM
-CÁ TRỨNG CHIÊN GIÒN
-CÁ TRỨNG NƯỚNG MUỐI ỚT
-CÁ TRỨNG(KG)
-CẢI MẦM TRỘN BÒ
-CẢI MẦM TRỘN CÁ HỘP
-CẢI MẦM TRỘN DẦU GIẤM
-CẢI THẢO LUỘC
-CẢI XANH LUỘC
-CẢI XANH XÀO BÒ
-CẢI XANH XÀO TỎI
-CẦN CÂU
-CANH CẢI CÁ THÁC LÁT
-CANH CẢI LÒNG GÀ
-CANH CẢI NẤU TÔM
-CANH CẢI THỊT BẰM
-CANH CẢI XANH
-CANH CHUA CÁ BÓP
-CANH CHUA CÁ LÓC
-CANH CHUA CÁ THÁC LÁT
-CÁNH GÀ
-CÁNH GÀ
-CANH KHỔ QUA CÁ THÁC LÁT
-CANH KHỔ QUA THỊT
-CANH KHỔ QUA TÔM
-CANH SƯỜN NON NÁU CẢI CHUA
-CANH XÀ LÁCH XOONG THỊT BẦM
-CANH XA LACH XOONG TOM
-CHÀ BÔNG
-CHÀ BÔNG THÊM
-CHẢ GIÒ CÁ LỐC
-CHẢ GIÒ KHÁNH KỲ
-CHẢ ỐC
-CHẢ ỐC
-CHẢ RAM TÔM ĐẤT
-CHÁO BÒ BẰM
-CHÁO CÁ BÓP
-CHÁO CÁ LÓC
-CHÁO CỒI SÒ
-CHÁO HẢI SẢN
-CHÁO HÀU
-CHÁO LÒNG GÀ
-CHÁO LƯƠN
-CHÁO NẤM
-CHÁO NGAO
-CHÁO THẬP CẨM
-CHÁO THỊT
-CHÁO TÔM
-CHÁO TRẮNG
-CHÁO TRỨNG
-CHIM SẺ CHIÊN
-CHIM SẺ NƯỚNG MẮM NHỈ
-CHIM SẺ NƯỚNG MUỐI ỚT
-CHIM SẺ RÔ TI
-CHIM SẺ(CON)
-CHÌNH
-CHÌNH KG
-COCA
-CỒI MAI CHIÊN MẮM
-CỜI MAI CHIÊN XÙ
-CỒI MAI NƯỚNG
-CỒI MAI(KG)
-CÒI SÒ ĐIỆP LỚN
-CỒI SÒ SA TẾ
-CƠM CHIÊN CÁ MẶN
-CƠM CHIÊN DƯƠNG CHÂU
-CƠM CHIÊN HẢI SẢN
-CƠM CHIÊN HONGKONG
-CƠM CHIÊN ỚT XANH
-CƠM CHIÊN TỎI
-CƠM CHIÊN TRỨNG
-CƠM GÀ
-CƠM TRẮNG
-CỪU GIẢ CẦY
-CỪU HẤP
-CỪU NƯỚNG MUỐI ỚT
-CỪU NƯỚNG SATE
-CỪU XÀO LĂN
-ĐẬU BẮP
-ĐẬU BẮP LUỘC
-ĐẬU BẮP XÀO TỎI
-ĐẬU BẮP XÀO TRỨNG
-ĐẬU BASA
-ĐẬU BASA HÀN QUỐC
-ĐẦU CÁ BÓP(KG)
-ĐẬU HỦ CÁ
-ĐẬU HỦ NON
-ĐÂU HỦ NƯỚNG GIẤY BẠC
-ĐẬU PHỘNG
-DÊ HẤP GIẢ CẦY
-DÊ HẤP GIẢ CẦY
-DÊ NẤU GIẢ CẦY
-DÊ NƯỚNG MUỐI ỚT
-DÊ NƯỚNG SATE
-DÊ XÀO LĂN
-DỒI TRƯỜNG
-DỒI TRƯỜNG(KG)
-DÔNG NƯỚNG MUỐI ỚT
-DÔNG(KG)
-DUNHILL
-ĐUÔI BÒ
-ĐUÔI BÒ CHIÊN MẮM
-ĐUÔI BÒ HẦM TIÊU
-ĐUỐI BÒ SATE
-ĐUÔI BÒ(KG)
-ẾCH CHIÊN BƠ
-ẾCH CHIÊN GIÒN
-ẾCH CHIÊN MẮM
-Ếch Con
-ẾCH CON
-ẾCH NẤU CHUỐI
-ẾCH NẤU LÁ GIANG
-ẾCH NƯỚNG MUỐI ỚT
-ẾCH NÚP RƠM
-ẾCH RÔ TI
-ẾCH UM BÚN TÀU
-ẾCH XÀO CẢI CHUA
-Ếch Xào Lăn
-ẾCH XÀO LĂN
-ẾCH XÀO SẢ ỚT
-GÀ (SỐ CON)
-GÀ TRE
-GÀ(SỐ KG)
-GẠO
-GỎI BAO TỬ KHỔ QUA
-GỎI BẮP BÒ
-GỎI BẮP CHUỐI TÔM THỊT
-GỎI BÒ BẮP CHUỐI
-GỎI BÒ BÓP THẤU
-GỎI BÒ KHÁNH KỲ
-GỔI BỒN BỒN TÔM THỊT
-GỎI CÁ CƠM
-GỎI CÁ MAI
-GỎI DÔNG
-GỎI ẾCH XÉ PHAY
-GỎI HẢI SẢN
-GỎI MỰC THÁI LAN
-GỎI NGÓ SEN TÔM THỊT
-GỎI SỨA
-GỎI THẬP CẨM
-GỎI XOÀI
-HÀU
-HÀU ĐÚT LÒ
-HÀU NƯỚNG MỠ HÀNH
-HÀU NƯỚNG PHOMAI
-HÀU SUSHI
-HÀU TÁI CHANH
-HẾN XÚC BÁNH TRÁNG
-HEO RỪNG
-HEO RỪNG(KG)
-HOA THIÊN LÝ LUỘC
-HOA THIÊN LÝ XÀO BÒ
-HOA THIÊN LÝ XÀO TỎI
-KHĂN LẠNH
-KHÔ GÀ LÁ CHANH
-KHỔ QUA CHÀ BÔNG
-KHỔ QUA LUỘC
-KHỔ QUA THÊM
-KHỔ QUA XÀO DẦU
-KHỔ QUA XÀO TỎI
-KHỔ QUA XÀO TRỨNG
-KHO QUẸT
-KHOAI TÂY CHIÊN
-KHOÁNG CHANH
-LẨU CÁ DIÊU HỒNG
-LẨU CÁ LÓC
-LẨU ĐẦU CA BÓP
-LẨU ĐẦU CÁ THU
-LẨU ĐÀU MÌNH CÁ BÓP
-LẨU ẾCH
-LẨU HẢI SẢN
-LẨU HẢI SẢN
-LẨU KHỎ QUA CÁ THÁC LÁT
-LẨU LƯƠN
-LẨU MẮM
-LẨU MÌNH CÁ BÓP
-LẨU NẤM
-LẨU THÁI
-LẨU THẬP CẨM
-LÒNG GÀ
-LÒNG GÀ HẤP
-LÒNG GÀ NẤU LÀ GIANG
-LÒNG GÀ NẤU MIẾN
-LONG GÀ XÀO CẢI
-LÒNG GÀ XÀO HỦ TIẾU
-LÒNG GÀ XÀO MĂNG TÂY
-LÒNG GÀ XÀO MÌ
-LÒNG GÀ XÀO MIẾN
-LÒNG GÀ XÀO MIẾN
-LÒNG GÀ XÀO MƯỚP
-LÒNG GÀ XÀO MƯỚP MIẾN
-LÒNG XÀO CHUA NGỌT
-LÒNG XÀO KHỔ QUA
-LONG XAO THIEN LY
-LƯỠI HEO
-LƯƠN BẰM XÚC BÁNH ĐA
-LƯƠN CHIÊN GIÒN
-LƯƠN HẤP SẢ
-LƯƠN NƯỚNG
-LƯƠN UM BÚN TÀU
-LƯƠN UM CHUỐI
-LƯƠN XÀO LĂN
-LƯƠN XÀO SẢ ỚT
-LƯƠN(KG)
-MĂNG TÂY LUỘC
-MĂNG TÂY XÀO BÒ
-MĂNG TÂY XÀO TỎI
-MỀ
-MÌ THẬP CẨM
-MÌ TÔM
-MÌ TÔM
-MÌ TÔM (TÔM)
-MÌ TÔM BÒ
-MÌ XÀO
-MÌ XÀO BÒ
-MÌ XÀO CHAY
-MÌ XÀO CHAY NẤM
-MÌ XÀO GIÒN
-MÌ XÀO GIÒN CHAY
-MÌ XÀO HẢI SẢN
-MÌ XÀO THẬP CẨM
-MÌ XÀO THẬP CẨM
-MIẾN THÊM
-MIẾN XÀO BÒ
-MIẾN XÀO HẢI SẢN
-MIẾN XÀO THẬP CẨM
-MIẾN XÀO THỊT HEO
-MÌNH CÁ BÓP(KG)
-MỒI CÂU
-MÓNG HEO CHIÊN GIÒN
-MÓNG HEO(KG)
-MÙ TẠC
-MỦ TRÔM
-MỰC 1 NẮNG(CON)
-MỰC CHIÊN GIÒN
-MỰC CHIÊN MẮM
-MỰC CHIÊN XÙ
-MỰC HẤP
-MỰC KG
-MỰC KHÔ
-MỰC KHÔ(CON)
-MỰC LÁ
-MỰC MỘT NẮNG
-MỰC NANG
-MỰC NHÚNG GIẤM
-MỰC NƯỚNG MUỐI ỚT
-MỰC SA TẾ
-MỰC TRỨNG (KG)
-MỰC TRỨNG CHIÊN GIÒN
-MỰC TRỨNG CHIÊN MẮM
-MỰC TRỨNG HẤP
-MỰC TRỨNG NƯỚNG
-MỰC XÀO CHUA NGỌT
-MỰC XÀO SẢ ỚT
-MƯỚP HẤP CÁ THÁC LÁT
-NẤM NƯỚNG GIẤY BẠC
-NẤM XÀO
-NGAO HẤP LÁ ME
-NGAO HẤP SẢ
-NGAO HẤP THÁI
-NGAO XÀO QUẾ
-NGHẸ(KG)
-NGŨ QUẢ LUỘC
-NƯỚC ĐÁ CHANH
-NUOC GUM GUM
-NƯỚC KHOÁNG
-NƯỚC YẾN
-ỐC BƯƠU XÀO SẢ ỚT
-ÔC BƯU UM CHUỐI
-ỐC HƯƠNG
-ỐC LEN XÀO DỪA
-PHẦN ĂN
-PHO MAI
-PHỤ THU 4 MÓN
-PHỤ THU BIA
-PHỤ THU CHÁO
-PHỤ THU HẤP
-PHỤ THU HẤP NƯỚNG
-PHỤ THU KHO NƯỚNG
-PHU THU LA GIANG + XAO MUOP
-PHỤ THU MĂNG CHUA
-PHỤ THU MĂNG TÂY
-PHU THU MON
-PHU THU MUC
-PHỤ THU NAI NHÚNG DẤM
-PHỤ THU NẤM
-PHỤ THU NẤU MIÊN
-PHU THU NƯỚNG
-PHỤ THU P.VIP
-PHỤ THU RANG MUỐI
-PHỤ THU TÔM NƯỚNG
-PHỤ THU XÀO HỦ TIẾU
-PHU THU XAO MANG TAY
-PHỤ THU XÀO MÌ
-PHỤ THU XÀO MIẾN
-PHỤ THU XÉ PHAY
-QUẸT GAS
-RĂNG MỰC
-RĂNG MỰC CHIÊN MẮM
-RĂNG MỰC LỚN
-RAU LANG LUỘC
-RAU LANG XÀO BÒ
-RAU LANG XÀO TỎI
-RAU MUỐNG LUỘC
-RAU MUỐNG XÀO BÒ
-RAU MUỐNG XÀO TỎI
-RAU THẬP CẨM LUỘC
-RAU THÊM
-RAU TRỘN GỎI
-RƯỢU VANG
-SAKE CHIÊN
-SÒ HUYẾT(KG)
-SODA
-SODA CHANH ĐƯỜNG
-SODA KEM
-STING
-STRONG BOW
-Sụn Gà
-SỤN GÀ
-SỤN GÀ(KG)
-SUỐI CHANH
-SUỐI LẠT
-SUỐI NGỌT
-SƯỜN DÊ NƯỚNG MUỐI ỚT
-SƯỜN HEO NẤU ĐẬU
-SƯỜN HEO NƯỚNG MỌI
-SƯỜN HEO(KG)
-SƯỜN NON CHIÊN GIÒN
-SƯỜN NON CHUA NGỌT
-SƯỜN NƯỚNG KIM CHI
-SƯỜN NƯỚNG MẬT ONG
-SƯỜN NƯỚNG MUỐI ỚT
-SÚP HẢI SẢN
-SÚP NẤM
-SÚP THẬP CẨM
-SÚP TÔM
-TẨY CHANH ĐƯỜNG
-Tên hàng hóa
-THỊT BA CHỈ(KG)
-THỊT BÒ(KG)
-THỊT DÊ/CỪU(KG)
-THỊT LUỘC CÀ PHÁO
-THỊT LUỘC CÀ PHÁO
-THUỐC 555 ANH
-THUỐC 555 BẠC
-THUỐC 555 VIỆT
-THUỐC CAPRI
-THUỐC JET
-THUỐC MÈO
-THUỐC MÈO XANH
-THUỐC NGỰA
-THUỐC NGỰA
-TÔM
-TÔM CHIÊN XÙ
-TÔM ĐÔNG TUYẾT
-TÔM HẤP
-TÔM KG
-TÔM MÙ TẠC
-TÔM NƯỚNG MỌI
-TÔM NƯỚNG MUỐI ỚT
-TÔM RANG ME
-TÔM RANG MUỐI
-TÔM TÁI CHANH
-TRÁI CÂY
-TRANG TRÍ SINH NHẬT
-TRỨNG
-TRÚNG CHIÊN
-TRỨNG CHIÊN HÀNH
-TRỨNG CHIÊN THỊT BẦM
-TRỨNG LUỘC
-TU HÀI
-VODKA LỚN
-VODKA NHỎ
-XÀ LÁCH TRỘN BÒ
-XÀ LÁCH TRỘN CÁ HỘP
-XÀ LÁCH TRỘN DẦU GIẤM
-XÀ LÁCH XOONG TRỘN BÒ
-XÀ LÁCH XOONG XÀO TỎI
-XÁ XỊ
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG ME' , 'BA CHỈ NƯỚNG MẺ', 'BA CHI' , 'BA CHỈ' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI NUONG XIEN QUE' , 'BA CHỈ NƯỚNG XIÊN QUE', 'BA CHI' , 'BA CHỈ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BA CHI XAO CAI CHUA' , 'BA CHỈ XÀO CẢI CHUA', 'BA CHI' , 'BA CHỈ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA' , 'BABA', 'BABA' , 'BABA' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BABA CON' , 'BABA CON', 'BABA' , 'BABA' , 330);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH BAO' , 'BÁNH BAO', 'BANH' , 'BÁNH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH MI' , 'BÁNH MỈ', 'BANH' , 'BÁNH' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG' , 'BÁNH TRÁNG', 'BANH' , 'BÁNH' , 3);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG MAM' , 'BÁNH TRÁNG MẮM', 'BANH' , 'BÁNH' , 5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BANH TRANG NHUNG' , 'BÁNH TRÁNG NHÚNG', 'BANH' , 'BÁNH' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU (KG)' , 'BAO TỬ (KG)', 'BAO TU' , 'BAO TỬ' , 5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU HAM TIEU' , 'BAO TỬ HẦM TIÊU', 'BAO TU' , 'BAO TỬ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAO TU XAO CHUA' , 'BAO TỬ XÀO CHUA', 'BAO TU' , 'BAO TỬ' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO HAM TIEU' , 'BẮP BÒ HẦM TIÊU', 'BAP' , 'BẮP' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO SATE' , 'BẮP BÒ SATE', 'BAP' , 'BẮP' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP BO(KG)' , 'BẮP BÒ(KG)', 'BAP' , 'BẮP' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO HANH' , 'BẮP XÀO HÀNH', 'BAP' , 'BẮP' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO THIT BAM' , 'BẮP XÀO THỊT BẰM', 'BAP' , 'BẮP' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAP XAO TÔM' , 'BẮP XÀO TÔM', 'BAP' , 'BẮP' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU' , 'BẦU', 'BAU' , 'BẦU' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BAU LUOC' , 'BẦU LUỘC', 'BAU' , 'BẦU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA AMSTEL CHAI' , 'BIA AMSTEL CHAI', 'BIA' , 'BIA' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA AMSTELL LON' , 'BIA AMSTELL LON', 'BIA' , 'BIA' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA BIVINA' , 'BIA BIVINA', 'BIA' , 'BIA' , 16);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA HENIKEN CHAI' , 'BIA HENIKEN CHAI', 'BIA' , 'BIA' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA HENIKEN LON' , 'BIA HENIKEN LON', 'BIA' , 'BIA' , 17.5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA LARUE' , 'BIA LARUE', 'BIA' , 'BIA' , 18.5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA SAI GON' , 'BIA SÀI GÒN', 'BIA' , 'BIA' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA TIGER BAC' , 'BIA TIGER BẠC', 'BIA' , 'BIA' , 12.5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA TIGER CHAI' , 'BIA TIGER CHAI', 'BIA' , 'BIA' , 15.5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BIA TIGER LON' , 'BIA TIGER LON', 'BIA' , 'BIA' , 14.5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BÒ 1 NANG KIEN VANG' , 'BÒ 1 NẮNG KIẾN VÀNG', 'BO' , 'BÒ' , 16);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO AP CHẢO' , 'BÒ ÁP CHẢO', 'BO' , 'BÒ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO BITTET KHOAI TÂY CHIÊN' , 'BÒ BITTET KHOAI TÂY CHIÊN', 'BO' , 'BÒ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU CHIEN MAM' , 'BỒ CÂU CHIÊN MẮM', 'BO CAU' , 'BỒ CÂU' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU HAM KHOAI MON' , 'BỒ CÂU HẦM KHOAI MÔN', 'BO CAU' , 'BỒ CÂU' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU NAU CHAO' , 'BỒ CÂU NẤU CHÁO', 'BO CAU' , 'BỒ CÂU' , 85);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU NHOI KHO QUA' , 'BỒ CÂU NHỒI KHỔ QUA', 'BO CAU' , 'BỒ CÂU' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU NUONG MAM NHI' , 'BỒ CÂU NƯỚNG MẮM NHỈ', 'BO CAU' , 'BỒ CÂU' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU NUONG MUOI OT' , 'BỒ CÂU NƯỚNG MUỐI ỚT', 'BO CAU' , 'BỒ CÂU' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU QUAY CHAO' , 'BỒ CÂU QUAY CHẢO', 'BO CAU' , 'BỒ CÂU' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU RO TI' , 'BỒ CÂU RÔ TI', 'BO CAU' , 'BỒ CÂU' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU TIEM OT XANH' , 'BỒ CÂU TIỀM ỚT XANH', 'BO CAU' , 'BỒ CÂU' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU TIEM THUOC BAC' , 'BỒ CÂU TIỀM THUỐC BẮC', 'BO CAU' , 'BỒ CÂU' , 95);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO CAU(CON)' , 'BỒ CÂU(CON)', 'BO CAU' , 'BỒ CÂU' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO HUC' , 'BÒ HÚC', 'BO' , 'BÒ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO LA LOT' , 'BÒ LÁ LỐT', 'BO' , 'BÒ' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO LUC LAC KHOAI TAY CHIEN' , 'BÒ LÚC LẮC KHOAI TÂY CHIÊN', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NE' , 'BÒ NÉ', 'BO' , 'BÒ' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NHANG GIAM' , 'BÒ NHÚNG GIẤM', 'BO' , 'BÒ' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NHUNG ME' , 'BÒ NHÚNG MẺ', 'BO' , 'BÒ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG KIEU NGA' , 'BÒ NƯỚNG KIỂU NGA', 'BO' , 'BÒ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG LA LOP' , 'BÒ NƯỚNG LÁ LỐP', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG ME' , 'BÒ NƯỚNG MÈ', 'BO' , 'BÒ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG MUOI OT' , 'BO NƯỚNG MUỐI ỚT', 'BO' , 'BÒ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG NGU SAC' , 'BÒ NƯỚNG NGŨ SẮC', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO NUONG PHO MAI' , 'BÒ NƯỚNG PHO MAI', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO QUANH LUA HONG' , 'BÒ QUANH LỬA HỒNG', 'BO' , 'BÒ' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO SOT ME' , 'BÒ SỐT ME', 'BO' , 'BÒ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO TAI CHANH' , 'BÒ TÁI CHANH', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO TAI RAU MUONG' , 'BÒ TÁI RAU MUỐNG', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO XAO CAI' , 'BÒ XÀO CẢI', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO XAO CHUA NGOT' , 'BÒ XÀO CHUA NGỌT', 'BO' , 'BÒ' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO XAO KHO QUA' , 'BÒ XÀO KHỔ QUA', 'BO' , 'BÒ' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BO XAO SA OT' , 'BÒ XÀO SẢ ÓT', 'BO' , 'BÒ' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BONG CAI LUOC' , 'BÔNG CẢI LUỘC', 'BONG CAI' , 'BÔNG CẢI' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BONG CAI XAO BO' , 'BÔNG CẢI XÀO BÒ', 'BONG CAI' , 'BÔNG CẢI' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BONG CAI XAO TOI' , 'BÔNG CẢI XÀO TỎI', 'BONG CAI' , 'BÔNG CẢI' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('BUN' , 'BÚN', 'BUN' , 'BÚN' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA BO DA(KG)' , 'CÁ BÒ DA(KG)', 'CA' , 'CÁ' , 7);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA BO LOT  DA' , 'CÁ BÒ LỘT  DA', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA BOP' , 'CA BOP', 'CA' , 'CA' , 250);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA BOP' , 'CÁ BÓP', 'CA' , 'CÁ' , 490);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA BOP KHO TO' , 'CÁ BÓP KHO TỘ', 'CA' , 'CÁ' , 490);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA CHEP' , 'CÁ CHÉP', 'CA' , 'CÁ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA CHEP KG' , 'CÁ CHÉP KG', 'CA' , 'CÁ' , 250);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA CHUA XAO CAI THAO' , 'CÀ CHUA XÀO CẢI THẢO', 'CA CHUA' , 'CÀ CHUA' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA CHUA/DUA LEO' , 'CÀ CHUA/DƯA LEO', 'CA CHUA' , 'CÀ CHUA' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA COM MOM TRON XOAI' , 'CÁ CƠM MỒM TRỘN XOÀI', 'CA' , 'CÁ' , 5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DANH NUONG' , 'CÁ DÃNH NƯỚNG', 'CA' , 'CÁ' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DANH TRON XOAI' , 'CÁ DÃNH TRỘN XOÀI', 'CA' , 'CÁ' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DIEU HONG CHIEN' , 'CÁ DIÊU HỒNG CHIÊN', 'CA' , 'CÁ' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DIEU HONG CHIEN XU' , 'CÁ DIÊU HỒNG CHIÊN XÙ', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DIEU HONG NUONG MUOI OT' , 'CÁ DIÊU HỒNG NƯỚNG MUỐI ỚT', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DIEU HONG RANG MUỐI' , 'CÁ DIÊU HỒNG RANG MUỐI', 'CA' , 'CÁ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA DIEU HONG UM BÚN TÀU' , 'CÁ DIÊU HỒNG UM BÚN TÀU', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA ĐUOI NUONG' , 'CÁ ĐUỐI NƯỚNG', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA KHOAI CHIEN' , 'CÁ KHOAI CHIÊN', 'CA' , 'CÁ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA KHOAI NUONG' , 'CÁ KHOAI NƯỚNG', 'CA' , 'CÁ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LAN' , 'CÁ LĂN', 'CA' , 'CÁ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LAN KG' , 'CÁ LĂN KG', 'CA' , 'CÁ' , 350);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC' , 'CÁ LỐC', 'CA' , 'CÁ' , 350);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC CHIÊN XÙ' , 'CÁ LÓC CHIÊN XÙ', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC HAP' , 'CÁ LÓC HẤP', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC HAP BAU' , 'CÁ LÓC HẤP BẦU', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC KG' , 'CÁ LỐC KG', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC NUONG GIAY BAC' , 'CÁ LÓC NƯỚNG GIẤY BẠC', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC NUONG LA TIA TÔ' , 'CÁ LÓC NƯỚNG LÁ TÍA TÔ', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC NUONG MUỐI ỚT' , 'CÁ LÓC NƯỚNG MUỐI ỚT', 'CA' , 'CÁ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC NUONG TRUI' , 'CÁ LÓC NƯỚNG TRUI', 'CA' , 'CÁ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA LOC UM BÚN TAU' , 'CÁ LỐC UM BÚN TÀU', 'CA' , 'CÁ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA MAI(KG)' , 'CÁ MAI(KG)', 'CA' , 'CÁ' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA MÚ' , 'CÁ MÚ', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA RỐT PHO MAI' , 'CÀ RỐT PHO MAI', 'CA' , 'CÀ' , 450);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA THAC  LAT(KG)' , 'CÁ THÁC  LÁT(KG)', 'CA' , 'CÁ' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA THAC LAC CHIÊN' , 'CÁ THÂC LÁC CHIÊN', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA THAC LAT THÊM' , 'CÁ THÁC LÁT THÊM', 'CA' , 'CÁ' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA THU' , 'CÁ THU', 'CA' , 'CÁ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA THU ĐAO' , 'CÁ THU ĐAO', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA TIM NƯỚNG MỠ HANH' , 'CÀ TÍM NƯỚNG MỠ HÀNH', 'CA' , 'CÀ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA TIM SỐT THỊT BẰM' , 'CÀ TÍM SỐT THỊT BẰM', 'CA' , 'CÀ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA TRUNG CHIÊN GIÒN' , 'CÁ TRỨNG CHIÊN GIÒN', 'CA' , 'CÁ' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA TRUNG NƯỚNG MUỐI ỚT' , 'CÁ TRỨNG NƯỚNG MUỐI ỚT', 'CA' , 'CÁ' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CA TRUNG(KG)' , 'CÁ TRỨNG(KG)', 'CA' , 'CÁ' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI MAM TRON BÒ' , 'CẢI MẦM TRỘN BÒ', 'CAI' , 'CẢI' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI MAM TRON CÁ HỘP' , 'CẢI MẦM TRỘN CÁ HỘP', 'CAI' , 'CẢI' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI MAM TRON DẦU GIẤM' , 'CẢI MẦM TRỘN DẦU GIẤM', 'CAI' , 'CẢI' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI THẢO LUỘC' , 'CẢI THẢO LUỘC', 'CAI' , 'CẢI' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI XANH LUỘC' , 'CẢI XANH LUỘC', 'CAI' , 'CẢI' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI XANH XAO BÒ' , 'CẢI XANH XÀO BÒ', 'CAI' , 'CẢI' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAI XANH XAO TỎI' , 'CẢI XANH XÀO TỎI', 'CAI' , 'CẢI' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CAN CAU' , 'CẦN CÂU', 'LINH TINH' , 'LINH TINH' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CAI CA THAC LAT' , 'CANH CẢI CÁ THÁC LÁT', 'CANH' , 'CANH' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CAI LONG GA' , 'CANH CẢI LÒNG GÀ', 'CANH' , 'CANH' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CAI NAU TOM' , 'CANH CẢI NẤU TÔM', 'CANH' , 'CANH' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CAI THỊT BẰM' , 'CANH CẢI THỊT BẰM', 'CANH' , 'CANH' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CAI XANH' , 'CANH CẢI XANH', 'CANH' , 'CANH' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CHUA CA BÓP' , 'CANH CHUA CÁ BÓP', 'CANH' , 'CANH' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CHUA CA LÓC' , 'CANH CHUA CÁ LÓC', 'CANH' , 'CANH' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH CHUA CA THÁC LÁT' , 'CANH CHUA CÁ THÁC LÁT', 'CANH' , 'CANH' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH GA' , 'CÁNH GÀ', 'GA' , 'GÀ' , 149);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH GA' , 'CÁNH GÀ', 'GA' , 'GÀ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH KHO QUA CA THAC LAT' , 'CANH KHỔ QUA CÁ THÁC LÁT', 'CANH' , 'CANH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH KHO QUA THIT' , 'CANH KHỔ QUA THỊT', 'CANH' , 'CANH' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH KHO QUA TOM' , 'CANH KHỔ QUA TÔM', 'CANH' , 'CANH' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH SƯỜN NON NAU CAI CHUA' , 'CANH SƯỜN NON NẤU CẢI CHUA', 'CANH' , 'CANH' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH XA LACH XOONG THIT BAM' , 'CANH XÀ LÁCH XOONG THỊT BẦM', 'CANH' , 'CANH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CANH XA LACH XOONG TOM' , 'CANH XA LACH XOONG TOM', 'CANH' , 'CANH' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA BONG' , 'CHÀ BÔNG', 'CHA BONG' , 'CHÀ BÔNG' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA BONG THEM' , 'CHÀ BÔNG THÊM', 'CHA BONG' , 'CHÀ BÔNG' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA GIO CA LOC' , 'CHẢ GIÒ CÁ LỐC', 'CHA' , 'CHẢ' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA GIO KHANH KY' , 'CHẢ GIÒ KHÁNH KỲ', 'CHA' , 'CHẢ' , 135);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA OC' , 'CHẢ ỐC', 'CHA' , 'CHẢ' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA OC' , 'CHẢ ỐC', 'CHA' , 'CHẢ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHA RAM TOM ĐAT' , 'CHẢ RAM TÔM ĐẤT', 'TOM' , 'TÔM' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO BO BAM' , 'CHÁO BÒ BẰM', 'CHAO' , 'CHÁO' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO CA BOP' , 'CHÁO CÁ BÓP', 'CHAO' , 'CHÁO' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO CA LOC' , 'CHÁO CÁ LÓC', 'CHAO' , 'CHÁO' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO COI SO' , 'CHÁO CỒI SÒ', 'CHAO' , 'CHÁO' , 110);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO HAI SAN' , 'CHÁO HẢI SẢN', 'CHAO' , 'CHÁO' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO HAU' , 'CHÁO HÀU', 'CHAO' , 'CHÁO' , 125);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO LONG GA' , 'CHÁO LÒNG GÀ', 'CHAO' , 'CHÁO' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO LUON' , 'CHÁO LƯƠN', 'CHAO' , 'CHÁO' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO NAM' , 'CHÁO NẤM', 'CHAO' , 'CHÁO' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO NGAO' , 'CHÁO NGAO', 'CHAO' , 'CHÁO' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO THAP CAM' , 'CHÁO THẬP CẨM', 'CHAO' , 'CHÁO' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO THIT' , 'CHÁO THỊT', 'CHAO' , 'CHÁO' , 125);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO TOM' , 'CHÁO TÔM', 'CHAO' , 'CHÁO' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO TRANG' , 'CHÁO TRẮNG', 'CHAO' , 'CHÁO' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHAO TRUNG' , 'CHÁO TRỨNG', 'CHAO' , 'CHÁO' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHIM SE CHIÊN' , 'CHIM SẺ CHIÊN', 'CHIM' , 'CHIM' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHIM SE NUONG MẮM NHỈ' , 'CHIM SẺ NƯỚNG MẮM NHỈ', 'CHIM' , 'CHIM' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHIM SE NUONG MUỐI ỚT' , 'CHIM SẺ NƯỚNG MUỐI ỚT', 'CHIM' , 'CHIM' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHIM SE RO TI' , 'CHIM SẺ RÔ TI', 'CHIM' , 'CHIM' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHIM SE(CON)' , 'CHIM SẺ(CON)', 'CHIM' , 'CHIM' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHINH' , 'CHÌNH', 'CHINHC' , 'CHÌNH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CHINH KG' , 'CHÌNH KG', 'CHINH' , 'CHÌNH' , 580);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI MAI CHIEN MAM' , 'CỒI MAI CHIÊN MẮM', 'COI' , 'CỒI' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI MAI CHIEN XU' , 'CỒI MAI CHIÊN XÙ', 'COI' , 'CỒI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI MAI NUONG' , 'CỒI MAI NƯỚNG', 'COI' , 'CỒI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI MAI(KG)' , 'CỒI MAI(KG)', 'COI' , 'CỒI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI SO ĐIEP LON' , 'CÒI SÒ ĐIỆP LỚN', 'COI' , 'CỒI' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COI SO SA TE' , 'CỒI SÒ SA TẾ', 'COI' , 'CỒI' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN CA MAN' , 'CƠM CHIÊN CÁ MẶN', 'COM' , 'CƠM' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN DƯƠNG CHAU' , 'CƠM CHIÊN DƯƠNG CHÂU', 'COM' , 'CƠM' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN HAI SAN' , 'CƠM CHIÊN HẢI SẢN', 'COM' , 'CƠM' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN HONGKONG' , 'CƠM CHIÊN HONGKONG', 'COM' , 'CƠM' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN OT XANH' , 'CƠM CHIÊN ỚT XANH', 'COM' , 'CƠM' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN TOI' , 'CƠM CHIÊN TỎI', 'COM' , 'CƠM' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM CHIEN TRUNG' , 'CƠM CHIÊN TRỨNG', 'COM' , 'CƠM' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM GA' , 'CƠM GÀ', 'COM' , 'CƠM' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COM TRANG' , 'CƠM TRẮNG', 'COM' , 'CƠM' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CUU GIA CAY' , 'CỪU GIẢ CẦY', 'CUU' , 'CỪU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CUU HAP' , 'CỪU HẤP', 'CUU' , 'CỪU' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CUU NUONG MUOI OT' , 'CỪU NƯỚNG MUỐI ỚT', 'CUU' , 'CỪU' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CUU NUONG SATE' , 'CỪU NƯỚNG SATE', 'CUU' , 'CỪU' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('CUU XAO LAN' , 'CỪU XÀO LĂN', 'CUU' , 'CỪU' , 130);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BAP' , 'ĐẬU BẮP', 'DAU' , 'ĐẬU' , 140);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BAP LUOC' , 'ĐẬU BẮP LUỘC', 'DAU' , 'ĐẬU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BAP XAO TOI' , 'ĐẬU BẮP XÀO TỎI', 'DAU' , 'ĐẬU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BAP XAO TRUNG' , 'ĐẬU BẮP XÀO TRỨNG', 'DAU' , 'ĐẬU' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BASA' , 'ĐẬU BASA', 'DAU' , 'ĐẬU' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU BASA HÀN QUỐC' , 'ĐẬU BASA HÀN QUỐC', 'DAU' , 'ĐẬU' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU CA BOP(KG)' , 'ĐẦU CÁ BÓP(KG)', 'CA' , 'CÁ' , 55);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU HU CA' , 'ĐẬU HỦ CÁ', 'DAU' , 'ĐẬU' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU HU NON' , 'ĐẬU HỦ NON', 'DAU' , 'ĐẬU' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU HU NUONG GIAY BAC' , 'ĐÂU HỦ NƯỚNG GIẤY BẠC', 'DAU' , 'ĐẬU' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DAU PHONG' , 'ĐẬU PHỘNG', 'DAU' , 'ĐẬU' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE HAP GIA CAY' , 'DÊ HẤP GIẢ CẦY', 'DE' , 'DÊ' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE HAP GIA CAY' , 'DÊ HẤP GIẢ CẦY', 'DE' , 'DÊ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE NAU GIA CAY' , 'DÊ NẤU GIẢ CẦY', 'DE' , 'DÊ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE NUONG MUOI OT' , 'DÊ NƯỚNG MUỐI ỚT', 'DE' , 'DÊ' , 180);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE NUONG SATE' , 'DÊ NƯỚNG SATE', 'DE' , 'DÊ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DE XAO LAN' , 'DÊ XÀO LĂN', 'DE' , 'DÊ' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DOI TRUONG' , 'DỒI TRƯỜNG', 'DOI' , 'DỒI' , 160);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DOI TRUONG(KG)' , 'DỒI TRƯỜNG(KG)', 'DOI' , 'DỒI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DONG NUONG MUOI OT' , 'DÔNG NƯỚNG MUỐI ỚT', 'DONG' , 'DÔNG' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DONG(KG)' , 'DÔNG(KG)', 'DONG' , 'DÔNG' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUNHILL' , 'DUNHILL', 'LINH TINH' , 'LINH TINH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUOI BO' , 'ĐUÔI BÒ', 'BO' , 'BÒ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUOI BO CHIEN MAM' , 'ĐUÔI BÒ CHIÊN MẮM', 'BO' , 'BÒ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUOI BO HAM TIEU' , 'ĐUÔI BÒ HẦM TIÊU', 'BO' , 'BÒ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUOI BO SATE' , 'ĐUỐI BÒ SATE', 'BO' , 'BÒ' , 140);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('DUOI BO(KG)' , 'ĐUÔI BÒ(KG)', 'BO' , 'BÒ' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH CHIEN BO' , 'ẾCH CHIÊN BƠ', 'ECH' , 'ẾCH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH CHIEN GION' , 'ẾCH CHIÊN GIÒN', 'ECH' , 'ẾCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH CHIEN MAM' , 'ẾCH CHIÊN MẮM', 'ECH' , 'ẾCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH CON' , 'ẾCH CON', 'ECH' , 'ẾCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH NAU CHUOI' , 'ẾCH NẤU CHUỐI', 'ECH' , 'ẾCH' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH NAU LA GIANG' , 'ẾCH NẤU LÁ GIANG', 'ECH' , 'ẾCH' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH NUONG MUOI OT' , 'ẾCH NƯỚNG MUỐI ỚT', 'ECH' , 'ẾCH' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH NUP ROM' , 'ẾCH NÚP RƠM', 'ECH' , 'ẾCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH RO TI' , 'ẾCH RÔ TI', 'ECH' , 'ẾCH' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH UM BUN TAU' , 'ẾCH UM BÚN TÀU', 'ECH' , 'ẾCH' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH XAO CAI CHUA' , 'ẾCH XÀO CẢI CHUA', 'ECH' , 'ẾCH' , 110);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH XAO LAN' , 'ẾCH XÀO LĂN', 'ECH' , 'ẾCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ECH XAO SA OT' , 'ẾCH XÀO SẢ ỚT', 'ECH' , 'ẾCH' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GA (SO CON)' , 'GÀ (SỐ CON)', 'GA' , 'GÀ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GA TRE' , 'GÀ TRE', 'GA' , 'GÀ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GA(SO KG)' , 'GÀ(SỐ KG)', 'GA' , 'GÀ' , 230);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GAO' , 'GẠO', 'GAO' , 'GẠO' , 210);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BAO TU KHO QUA' , 'GỎI BAO TỬ KHỔ QUA', 'GOI' , 'GỎI' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BAP BO' , 'GỎI BẮP BÒ', 'GOI' , 'GỎI' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BAP CHUOI TOM THIT' , 'GỎI BẮP CHUỐI TÔM THỊT', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BO BAP CHUOI' , 'GỎI BÒ BẮP CHUỐI', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BO BÓP THAU' , 'GỎI BÒ BÓP THẤU', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BO KHANH KY' , 'GỎI BÒ KHÁNH KỲ', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI BON BON TOM THIT' , 'GỔI BỒN BỒN TÔM THỊT', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI CA COM' , 'GỎI CÁ CƠM', 'GOI' , 'GỎI' , 85);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI CA MAI' , 'GỎI CÁ MAI', 'GOI' , 'GỎI' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI DÔNG' , 'GỎI DÔNG', 'GOI' , 'GỎI' , 89);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI ẾCH XÉ PHAY' , 'GỎI ẾCH XÉ PHAY', 'GOI' , 'GỎI' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI HẢI SẢN' , 'GỎI HẢI SẢN', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI MỰC THÁI LAN' , 'GỎI MỰC THÁI LAN', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI NGÓ SEN TÔM THỊT' , 'GỎI NGÓ SEN TÔM THỊT', 'GOI' , 'GỎI' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI SỨA' , 'GỎI SỨA', 'GOI' , 'GỎI' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI THẬP CẨM' , 'GỎI THẬP CẨM', 'GOI' , 'GỎI' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('GOI XOÀI' , 'GỎI XOÀI', 'GOI' , 'GỎI' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU' , 'HÀU', 'HAU' , 'HÀU' , 39);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU DUT LO' , 'HÀU ĐÚT LÒ', 'HAU' , 'HÀU' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU NUONG MO HANH' , 'HÀU NƯỚNG MỠ HÀNH', 'HAU' , 'HÀU' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU NUONG PHOMAI' , 'HÀU NƯỚNG PHOMAI', 'HAU' , 'HÀU' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU SUSHI' , 'HÀU SUSHI', 'HAU' , 'HÀU' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HAU TAI CHANH' , 'HÀU TÁI CHANH', 'HAU' , 'HÀU' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HEN XUC BANH TRANG' , 'HẾN XÚC BÁNH TRÁNG', 'HEN' , 'HẾN' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HEO RUNG' , 'HEO RỪNG', 'HEO' , 'HEO' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HEO RUNG(KG)' , 'HEO RỪNG(KG)', 'HEO' , 'HEO' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HOA THIEN LY LUOC' , 'HOA THIÊN LÝ LUỘC', 'HOA THIEN LY' , 'HOA THIÊN LÝ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HOA THIEN LY XAO BO' , 'HOA THIÊN LÝ XÀO BÒ', 'HOA THIEN LY' , 'HOA THIÊN LÝ' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('HOA THIEN LY XAO TOI' , 'HOA THIÊN LÝ XÀO TỎI', 'HOA THIEN LY' , 'HOA THIÊN LÝ' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHAN LANH' , 'KHAN LANH', 'KHAN' , 'KHĂN' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO GA LA CHANH' , 'KHÔ GÀ LÁ CHANH', 'GA' , 'GÀ' , 2);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA CHA BONG' , 'KHỔ QUA CHÀ BÔNG', 'KHO QUA' , 'KHỔ' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA LUOC' , 'KHỔ QUA LUỘC', 'KHO QUA' , 'KHỔ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA THEM' , 'KHỔ QUA THÊM', 'KHO QUA' , 'KHỔ' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA XAO DAU' , 'KHỔ QUA XÀO DẦU', 'KHO QUA' , 'KHỔ' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA XAO TOI' , 'KHỔ QUA XÀO TỎI', 'KHO QUA' , 'KHỔ' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUA XAO TRUNG' , 'KHỔ QUA XÀO TRỨNG', 'KHO QUA' , 'KHỔ' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHO QUET' , 'KHO QUẸT', 'KHO' , 'KHO' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHOAI TAY CHIEN' , 'KHOAI TÂY CHIÊN', 'RAU' , 'RAU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU CA DIEU HONG' , 'LẨU CÁ DIÊU HỒNG', 'LAU' , 'LẨU' , 13);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU CA LOC' , 'LẨU CÁ LÓC', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU DAU CA BOP' , 'LẨU ĐẦU CA BÓP', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU DAU CA THU' , 'LẨU ĐẦU CÁ THU', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU DAU MINH CA BOP' , 'LẨU ĐÀU MÌNH CÁ BÓP', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU ECH' , 'LẨU ẾCH', 'LAU' , 'LẨU' , 189);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU HAI SAN' , 'LẨU HẢI SẢN', 'LAU' , 'LẨU' , 170);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU HAI SAN' , 'LẨU HẢI SẢN', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU KHO QUA CA THAC LAT' , 'LẨU KHỎ QUA CÁ THÁC LÁT', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU LUON' , 'LẨU LƯƠN', 'LAU' , 'LẨU' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU MAM' , 'LẨU MẮM', 'LAU' , 'LẨU' , 170);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU MINH CA BOP' , 'LẨU MÌNH CÁ BÓP', 'LAU' , 'LẨU' , 200);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU NAM' , 'LẨU NẤM', 'LAU' , 'LẨU' , 199);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU THAI' , 'LẨU THÁI', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LAU THAP CAM' , 'LẨU THẬP CẨM', 'LAU' , 'LẨU' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA' , 'LÒNG GÀ', 'LONG' , 'LÒNG' , 175);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA HAP' , 'LÒNG GÀ HẤP', 'LONG' , 'LÒNG' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA NAU LA GIANG' , 'LÒNG GÀ NẤU LÀ GIANG', 'LONG' , 'LÒNG' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA NAU MIEN' , 'LÒNG GÀ NẤU MIẾN', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO CAI' , 'LONG GÀ XÀO CẢI', 'LONG' , 'LÒNG' , 59);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO HU TIEU' , 'LÒNG GÀ XÀO HỦ TIẾU', 'LONG' , 'LÒNG' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MANG TAY' , 'LÒNG GÀ XÀO MĂNG TÂY', 'LONG' , 'LÒNG' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MI' , 'LÒNG GÀ XÀO MÌ', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MIEN' , 'LÒNG GÀ XÀO MIẾN', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MIEN' , 'LÒNG GÀ XÀO MIẾN', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MUOP' , 'LÒNG GÀ XÀO MƯỚP', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG GA XAO MUOP MIEN' , 'LÒNG GÀ XÀO MƯỚP MIẾN', 'LONG' , 'LÒNG' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG XAO CHUA NGOT' , 'LÒNG XÀO CHUA NGỌT', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG XAO KHO QUA' , 'LÒNG XÀO KHỔ QUA', 'LONG' , 'LÒNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LONG XAO THIEN LY' , 'LONG XAO THIEN LY', 'LONG' , 'LÒNG' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUOI HEO' , 'LƯỠI HEO', 'HEO' , 'HEO' , 69);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON BAM XUC BANH ĐA' , 'LƯƠN BẰM XÚC BÁNH ĐA', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON CHIEN GION' , 'LƯƠN CHIÊN GIÒN', 'LUON' , 'LƯƠN' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON HAP SA' , 'LƯƠN HẤP SẢ', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON NUONG' , 'LƯƠN NƯỚNG', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON UM BUN TAU' , 'LƯƠN UM BÚN TÀU', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON UM CHUOI' , 'LƯƠN UM CHUỐI', 'LUON' , 'LƯƠN' , 110);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON XAO LAN' , 'LƯƠN XÀO LĂN', 'LUON' , 'LƯƠN' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON XAO SA OT' , 'LƯƠN XÀO SẢ ỚT', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('LUON(KG)' , 'LƯƠN(KG)', 'LUON' , 'LƯƠN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MANG TAY LUOC' , 'MĂNG TÂY LUỘC', 'MANG' , 'MĂNG' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MANG TAY XAO BO' , 'MĂNG TÂY XÀO BÒ', 'MANG' , 'MĂNG' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MANG TAY XAO TOI' , 'MĂNG TÂY XÀO TỎI', 'MANG' , 'MĂNG' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('ME' , 'MỀ', 'ME' , 'MỀ' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI THAP CAM' , 'MÌ THẬP CẨM', 'MI' , 'MÌ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI TOM' , 'MÌ TÔM', 'MI' , 'MÌ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI TOM' , 'MÌ TÔM', 'MI' , 'MÌ' , 3);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI TOM (TÔM)' , 'MÌ TÔM (TÔM)', 'MI' , 'MÌ' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI TOM BO' , 'MÌ TÔM BÒ', 'MI' , 'MÌ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO' , 'MÌ XÀO', 'MI' , 'MÌ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO BO' , 'MÌ XÀO BÒ', 'MI' , 'MÌ' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO CHAY' , 'MÌ XÀO CHAY', 'MI' , 'MÌ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO CHAY NAM' , 'MÌ XÀO CHAY NẤM', 'MI' , 'MÌ' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO GION' , 'MÌ XÀO GIÒN', 'MI' , 'MÌ' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO GION CHAY' , 'MÌ XÀO GIÒN CHAY', 'MI' , 'MÌ' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO HAI SAN' , 'MÌ XÀO HẢI SẢN', 'MI' , 'MÌ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO THAP CAM' , 'MÌ XÀO THẬP CẨM', 'MI' , 'MÌ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MI XAO THAP CAM' , 'MÌ XÀO THẬP CẨM', 'MI' , 'MÌ' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MIEN THEM' , 'MIẾN THÊM', 'MIEN' , 'MIẾN' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MIEN XAO BO' , 'MIẾN XÀO BÒ', 'MIEN' , 'MIẾN' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MIEN XAO HAI SAN' , 'MIẾN XÀO HẢI SẢN', 'MIEN' , 'MIẾN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MIEN XAO THAP CAM' , 'MIẾN XÀO THẬP CẨM', 'MIEN' , 'MIẾN' , 85);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MIEN XAO THIT HEO' , 'MIẾN XÀO THỊT HEO', 'MIEN' , 'MIẾN' , 85);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MINH CA BOP(KG)' , 'MÌNH CÁ BÓP(KG)', 'CA' , 'CÁ' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MOI CAU' , 'MỒI CÂU', 'MOI' , 'MỒI' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MONG HEO CHIÊN GIÒN' , 'MÓNG HEO CHIÊN GIÒN', 'HEO' , 'HEO' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MONG HEO(KG)' , 'MÓNG HEO(KG)', 'HEO' , 'HEO' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MU TROM' , 'MỦ TRÔM', 'CHE' , 'CHÈ' , 27);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC 1 NANG(CON)' , 'MỰC 1 NẮNG(CON)', 'MUC' , 'MỰC' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC CHIEN GION' , 'MỰC CHIÊN GIÒN', 'MUC' , 'MỰC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC CHIEN MAM' , 'MỰC CHIÊN MẮM', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC CHIEN XU' , 'MỰC CHIÊN XÙ', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC HAP' , 'MỰC HẤP', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC KG' , 'MỰC KG', 'MUC' , 'MỰC' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC KHO' , 'MỰC KHÔ', 'MUC' , 'MỰC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC KHO(CON)' , 'MỰC KHÔ(CON)', 'MUC' , 'MỰC' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC LA' , 'MỰC LÁ', 'MUC' , 'MỰC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC MOT NANG' , 'MỰC MỘT NẮNG', 'MUC' , 'MỰC' , 300);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC NANG' , 'MỰC NANG', 'MUC' , 'MỰC' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC NHUNG GIAM' , 'MỰC NHÚNG GIẤM', 'MUC' , 'MỰC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC NUONG MUOI OT' , 'MỰC NƯỚNG MUỐI ỚT', 'MUC' , 'MỰC' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC SA TE' , 'MỰC SA TẾ', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC TRUNG (KG)' , 'MỰC TRỨNG (KG)', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC TRUNG CHIEN GION' , 'MỰC TRỨNG CHIÊN GIÒN', 'MUC' , 'MỰC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC TRUNG CHIEN MAM' , 'MỰC TRỨNG CHIÊN MẮM', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC TRUNG HAP' , 'MỰC TRỨNG HẤP', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC TRUNG NUONG' , 'MỰC TRỨNG NƯỚNG', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC XAO CHUA NGOT' , 'MỰC XÀO CHUA NGỌT', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUC XAO SA OT' , 'MỰC XÀO SẢ ỚT', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MUOP HAP CA THAC LAT' , 'MƯỚP HẤP CÁ THÁC LÁT', 'CA' , 'CÁ' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NAM NUONG GIAY BAC' , 'NẤM NƯỚNG GIẤY BẠC', 'NAM' , 'NẤM' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NAM XAO' , 'NẤM XÀO', 'NAM' , 'NẤM' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGAO HAP LA ME' , 'NGAO HẤP LÁ ME', 'NGAO' , 'NGAO' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGAO HAP SA' , 'NGAO HẤP SẢ', 'NGAO' , 'NGAO' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGAO HAP THAI' , 'NGAO HẤP THÁI', 'NGAO' , 'NGAO' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGAO XÀO QUE' , 'NGAO XÀO QUẾ', 'NGAO' , 'NGAO' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGHE(KG)' , 'NGHẸ(KG)', 'NGHE' , 'NGHẸ' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NGU QUA LUOC' , 'NGŨ QUẢ LUỘC', 'LINH TINH' , 'LINH TINH' , 400);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NUOC ĐA CHANH' , 'NƯỚC ĐÁ CHANH', 'NUOC' , 'NƯỚC' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NUOC GUM GUM' , 'NUOC GUM GUM', 'NUOC' , 'NUOC' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NUOC KHOANG' , 'NƯỚC KHOÁNG', 'NUOC' , 'NƯỚC' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('NUOC YEN' , 'NƯỚC YẾN', 'NUOC' , 'NƯỚC' , 8);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('OC BƯƠU XÀO SẢ ỚT' , 'ỐC BƯƠU XÀO SẢ ỚT', 'OC' , 'ỐC' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('OC BƯU UM CHUỐI' , 'ÔC BƯU UM CHUỐI', 'OC' , 'ÔC' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('OC HƯƠNG' , 'ỐC HƯƠNG', 'OC' , 'ỐC' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('OC LEN XÀO DỪA' , 'ỐC LEN XÀO DỪA', 'OC' , 'ỐC' , .5);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHAN AN' , 'PHẦN ĂN', 'PHAN' , 'PHẦN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHO MAI' , 'PHO MAI', 'PHO' , 'PHO' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU 4 MON' , 'PHỤ THU 4 MÓN', 'PHU THU' , 'PHỤ' , 7);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU BIA' , 'PHỤ THU BIA', 'PHU THU' , 'PHỤ' , 300);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU CHAO' , 'PHỤ THU CHÁO', 'PHU THU' , 'PHỤ' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU HAP' , 'PHỤ THU HẤP', 'PHU THU' , 'PHỤ' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU HAP NUONG' , 'PHỤ THU HẤP NƯỚNG', 'PHU THU' , 'PHỤ' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU KHO NUONG' , 'PHỤ THU KHO NƯỚNG', 'PHU THU' , 'PHỤ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU LA GIANG + XAO MUOP' , 'PHU THU LA GIANG + XAO MUOP', 'PHU THU' , 'PHỤ' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU MANG CHUA' , 'PHỤ THU MĂNG CHUA', 'PHU THU' , 'PHỤ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU MANG TAY' , 'PHỤ THU MĂNG TÂY', 'PHU THU' , 'PHỤ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU MON' , 'PHU THU MON', 'PHU THU' , 'PHU' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU MUC' , 'PHU THU MUC', 'PHU THU' , 'PHU' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU NAI NHUNG DAM' , 'PHỤ THU NAI NHÚNG DẤM', 'PHU THU' , 'PHỤ' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU NAM' , 'PHỤ THU NẤM', 'PHU THU' , 'PHỤ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU NAU MIEN' , 'PHỤ THU NẤU MIÊN', 'PHU THU' , 'PHỤ' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU NUONG' , 'PHU THU NƯỚNG', 'PHU THU' , 'PHỤ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU P.VIP' , 'PHỤ THU P.VIP', 'PHU THU' , 'PHỤ' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU RANG MUOI' , 'PHỤ THU RANG MUỐI', 'PHU THU' , 'PHỤ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU TOM NUONG' , 'PHỤ THU TÔM NƯỚNG', 'PHU THU' , 'PHỤ' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU XAO HU TIEU' , 'PHỤ THU XÀO HỦ TIẾU', 'PHU THU' , 'PHỤ' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU XAO MANG TAY' , 'PHU THU XAO MANG TAY', 'PHU THU' , 'PHU' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU XAO MI' , 'PHỤ THU XÀO MÌ', 'PHU THU' , 'PHỤ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU XAO MIEN' , 'PHỤ THU XÀO MIẾN', 'PHU THU' , 'PHỤ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('PHU THU XE PHAY' , 'PHỤ THU XÉ PHAY', 'PHU THU' , 'PHỤ' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RANG MUC' , 'RĂNG MỰC', 'MUC' , 'MỰC' , 3);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RANG MUC CHIEN MAM' , 'RĂNG MỰC CHIÊN MẮM', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RANG MUC LON' , 'RĂNG MỰC LỚN', 'MUC' , 'MỰC' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU LANG LUOC' , 'RAU LANG LUỘC', 'RAU' , 'RAU' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU LANG XAO BO' , 'RAU LANG XÀO BÒ', 'RAU' , 'RAU' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU LANG XAO TOI' , 'RAU LANG XÀO TỎI', 'RAU' , 'RAU' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU MUONG LUOC' , 'RAU MUỐNG LUỘC', 'RAU' , 'RAU' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU MUONG XAO BO' , 'RAU MUỐNG XÀO BÒ', 'RAU' , 'RAU' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU MUONG XAO TOI' , 'RAU MUỐNG XÀO TỎI', 'RAU' , 'RAU' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU THAP CAM LUOC' , 'RAU THẬP CẨM LUỘC', 'RAU' , 'RAU' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU THEM' , 'RAU THÊM', 'RAU' , 'RAU' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RAU TRON GOI' , 'RAU TRỘN GỎI', 'RAU' , 'RAU' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('RUOU VANG' , 'RƯỢU VANG', 'RƯỢU' , 'RƯỢU' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SAKE CHIEN' , 'SAKE CHIÊN', 'SAKE' , 'SAKE' , 160);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SO HUYET(KG)' , 'SÒ HUYẾT(KG)', 'OC' , 'ỐC' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('STING' , 'STING', 'OC' , 'ỐC' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('STRONG BOW' , 'STRONG BOW', 'OC' , 'ỐC' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUN GA' , 'SỤN GÀ', 'SUN' , 'SỤN' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUN GA(KG)' , 'SỤN GÀ(KG)', 'SUN' , 'SỤN' , 80);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON DE NUONG MUOI OT' , 'SƯỜN DÊ NƯỚNG MUỐI ỚT', 'SUON' , 'SƯỜN' , 12);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON HEO NAU ĐAU' , 'SƯỜN HEO NẤU ĐẬU', 'SUON' , 'SƯỜN' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON HEO NUONG MOI' , 'SƯỜN HEO NƯỚNG MỌI', 'SUON' , 'SƯỜN' , 150);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON HEO(KG)' , 'SƯỜN HEO(KG)', 'SUON' , 'SƯỜN' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON NON CHIEN GION' , 'SƯỜN NON CHIÊN GIÒN', 'SUON' , 'SƯỜN' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON NON CHUA NGOT' , 'SƯỜN NON CHUA NGỌT', 'SUON' , 'SƯỜN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON NUONG KIM CHI' , 'SƯỜN NƯỚNG KIM CHI', 'SUON' , 'SƯỜN' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON NUONG MAT ONG' , 'SƯỜN NƯỚNG MẬT ONG', 'SUON' , 'SƯỜN' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUON NUONG MUOI OT' , 'SƯỜN NƯỚNG MUỐI ỚT', 'SUON' , 'SƯỜN' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUP HAI SAN' , 'SÚP HẢI SẢN', 'SUP' , 'SÚP' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUP NAM' , 'SÚP NẤM', 'SUP' , 'SÚP' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUP THAP CAM' , 'SÚP THẬP CẨM', 'SUP' , 'SÚP' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUP TAM' , 'SÚP TÔM', 'SUP' , 'SÚP' , 90);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THIT BA CHỈ(KG)' , 'THỊT BA CHỈ(KG)', 'THIT' , 'THỊT' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THIT BÒ(KG)' , 'THỊT BÒ(KG)', 'THIT' , 'THỊT' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THIT DE/CUU(KG)' , 'THỊT DÊ/CỪU(KG)', 'THIT' , 'THỊT' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THIT LUOC CA PHAO' , 'THỊT LUỘC CÀ PHÁO', 'THIT' , 'THỊT' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THIT LUOC CA PHAO' , 'THỊT LUỘC CÀ PHÁO', 'THIT' , 'THỊT' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC 555 ANH' , 'THUỐC 555 ANH', 'THUOC' , 'THUỐC' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC 555 BAC' , 'THUỐC 555 BẠC', 'THUOC' , 'THUỐC' , 40);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC 555 VIET' , 'THUỐC 555 VIỆT', 'THUOC' , 'THUỐC' , 30);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC CAPRI' , 'THUỐC CAPRI', 'THUOC' , 'THUỐC' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC JET' , 'THUỐC JET', 'THUOC' , 'THUỐC' , 55);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC MEO' , 'THUỐC MÈO', 'THUOC' , 'THUỐC' , 27);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC MEO XANH' , 'THUỐC MÈO XANH', 'THUOC' , 'THUỐC' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC NGUA' , 'THUỐC NGỰA', 'THUOC' , 'THUỐC' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('THUOC NGUA' , 'THUỐC NGỰA', 'THUOC' , 'THUỐC' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM' , 'TÔM', 'TOM' , 'TÔM' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM CHIEN XU' , 'TÔM CHIÊN XÙ', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM DONG TUYET' , 'TÔM ĐÔNG TUYẾT', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM HAP' , 'TÔM HẤP', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM KG' , 'TÔM KG', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM MU TAC' , 'TÔM MÙ TẠC', 'TOM' , 'TÔM' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM NUONG MOI' , 'TÔM NƯỚNG MỌI', 'TOM' , 'TÔM' , 100);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM NUONG MUOI OT' , 'TÔM NƯỚNG MUỐI ỚT', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM RANG ME' , 'TÔM RANG ME', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM RANG MUOI' , 'TÔM RANG MUỐI', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TOM TAI CHANH' , 'TÔM TÁI CHANH', 'TOM' , 'TÔM' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRAI CAY' , 'TRÁI CÂY', 'LINH TINH' , 'LINH TINH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRANG TRI SINH NHAT' , 'TRANG TRÍ SINH NHẬT', 'LINH TINH' , 'LINH TINH' , 20);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRUNG' , 'TRỨNG', 'TRUNG' , 'TRỨNG' , 200);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRUNG CHIEN' , 'TRỨNG CHIÊN', 'TRUNG' , 'TRỨNG' , 7);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRUNG CHIEN HANH' , 'TRỨNG CHIÊN HÀNH', 'TRUNG' , 'TRỨNG' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRUNG CHIEN THIT BAM' , 'TRỨNG CHIÊN THỊT BẦM', 'TRUNG' , 'TRỨNG' , 25);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TRUNG LUOC' , 'TRỨNG LUỘC', 'TRUNG' , 'TRỨNG' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TU HÀI' , 'TU HÀI', 'TU' , 'TU' , 7);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('VODKA LON' , 'VODKA LỚN', 'RUOU' , 'RƯỢU' , 180);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('VODKA NHO' , 'VODKA NHỎ', 'RUOU' , 'RƯỢU' , 120);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA LACH TRON BO' , 'XÀ LÁCH TRỘN BÒ', 'XA LACH' , 'XÀ LÁCH' , 65);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA LACH TRON CA HOP' , 'XÀ LÁCH TRỘN CÁ HỘP', 'XA LACH' , 'XÀ LÁCH' , 70);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA LACH TRON DAU GIAM' , 'XÀ LÁCH TRỘN DẦU GIẤM', 'XA LACH' , 'XÀ LÁCH' , 60);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA LACH XOONG TRON BO' , 'XÀ LÁCH XOONG TRỘN BÒ', 'XA LACH' , 'XÀ LÁCH' , 45);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA LACH XOONG XAO TOI' , 'XÀ LÁCH XOONG XÀO TỎI', 'XA LACH' , 'XÀ LÁCH' , 75);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('XA XI' , 'XÁ XỊ', 'NUOC' , 'NƯỚC' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('KHOANG CHANH' , 'KHOÁNG CHANH', 'NUOC' , 'NƯỚC' , 35);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('MU TAC' , 'MÙ TẠC', 'PHU THU' , 'PHỤ THU' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('QUET GAS' , 'QUẸT GAS', 'LINH TINH' , 'LINH TINH' , 50);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SODA' , 'SODA', 'NUOC' , 'NƯỚC' , 200);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SODA CHANH DUONG' , 'SODA CHANH ĐƯỜNG', 'NUOC' , 'NƯỚC' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('COCA' , 'COCA', 'NUOC' , 'NƯỚC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SODA KEM' , 'SODA KEM', 'NUOC' , 'NƯỚC' , 17);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUOI LAT' , 'SUỐI LẠT', 'NUOC' , 'NƯỚC' , 15);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUOI NGOT' , 'SUỐI NGỌT', 'NUOC' , 'NƯỚC' , 10);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('SUOI CHANH' , 'SUỐI CHANH', 'NUOC' , 'NƯỚC' , 0);
+INSERT INTO food (name , viet_name, category, viet_category, price) VALUES ('TAY CHANH ĐUONG' , 'TẨY CHANH ĐƯỜNG', 'NUOC' , 'NƯỚC' , 90);
 
 
 

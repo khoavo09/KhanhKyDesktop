@@ -110,7 +110,6 @@ public class DBConnect {
 					String sql = "INSERT INTO all_orders(table_id) VALUES(?)";
 			        PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			        statement.setInt(1, results.getInt("id"));
-					System.out.println(statement);
 
 			        
 			        int affectedRows = statement.executeUpdate();
@@ -175,14 +174,15 @@ public class DBConnect {
 	}
 	
 	
-	public List<Integer> getOrderDetails(int orderID) {
-		List<Integer> salesInTheOrder= new ArrayList<Integer>();
+	public List<Sale> getOrderDetails(int orderID) {
+		List<Sale> salesInTheOrder= new ArrayList<Sale>();
 		try {
 			String query = "select * from sale where order_id = "+orderID;
 			results = st.executeQuery(query);
 			while(results.next()) {
 				int id = results.getInt("food_id");
-				salesInTheOrder.add(id);
+				double amount = results.getDouble("amount");
+				salesInTheOrder.add(new Sale(id,orderID,amount,0));
 				//System.out.println(foodDetail.getVietnameseName());
 
 			}			
@@ -193,29 +193,49 @@ public class DBConnect {
 		return salesInTheOrder;
 	}
 	
-	public boolean insertSale(List<Sale> saleList) {
-		String query = "INSERT INTO sale(food_id,order_id, status) " + "VALUES(?,?,?)";
-
+	public boolean insertSale(Sale sale) {
+		String query = "INSERT INTO sale(food_id,order_id, status, amount) VALUES(?,?,?,?)";
 		try {
 			PreparedStatement statement = con.prepareStatement(query);
 			int count = 0;
-			 
-            for (Sale sale : saleList) {
                 statement.setInt(1, sale.getFoodID());
                 statement.setInt(2, sale.getOrderID());
                 statement.setInt(3, sale.getStatus());
-                statement.addBatch();
-                count++;
-                // execute every 50 rows or less
-                if (count % 50 == 0 || count == saleList.size()) {
-                    statement.executeBatch();
-                }		
-            }
+                statement.setInt(4, 1);
+                statement.executeUpdate();
+            return true;
 		}
 		catch(Exception err) {
 			System.out.println(err);
 		}
 		return false;
+	}
+	
+	public void updateSale(Sale sale, String type) {
+		String query="";
+		if(type =="set") {
+			query = "UPDATE sale set amount = ? where food_id = ? and order_id = ?";
+		}
+		else {
+			query = "UPDATE sale set amount = amount + 1 where food_id = ? and order_id = ?";
+		}
+		
+		try {
+			PreparedStatement statement = con.prepareStatement(query);
+			if(type =="set") {
+	            statement.setDouble(1, sale.getAmount());
+	            statement.setInt(2, sale.getFoodID());
+	            statement.setInt(3, sale.getOrderID());
+			}
+			else {
+	            statement.setInt(1, sale.getFoodID());
+	            statement.setInt(2, sale.getOrderID());
+			}
+			statement.executeUpdate();
+		}
+		catch(Exception err) {
+			System.out.println(err);
+		}
 	}
 	
 	public void closeOrder(int orderID, String areaName, int tableNum) {
